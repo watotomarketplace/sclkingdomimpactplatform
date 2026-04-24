@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  /* SCL Design System Color Tokens — Black & White Edition */
+  --bg-base: #F7F7F5;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #0A0A0A;
+  --text-primary: #0A0A0A;
+  --text-secondary: #737373;
+  --text-inverse: #F7F7F5;
+  --accent-primary: #0A0A0A;
+  --accent-gold: #C8973A;
+  --accent-warning: #D97706;
+  --accent-danger: #DC2626;
+  --accent-sky: #3A6B8A;
+  --border: #E5E5E5;
+  --border-strong: #D4D4D4;
+  --sidebar-active-bg: rgba(255, 255, 255, 0.07);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.04);
+}
+
+@theme inline {
+  --color-bg-base: var(--bg-base);
+  --color-bg-card: var(--bg-card);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-inverse: var(--text-inverse);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-warning: var(--accent-warning);
+  --color-accent-danger: var(--accent-danger);
+  --color-accent-sky: var(--accent-sky);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-playfair);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans, 'DM Sans', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Floating label inputs */
+.floating-label-group {
+  position: relative;
+}
+
+.floating-label-group input,
+.floating-label-group textarea {
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.floating-label-group label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  transition: all 0.15s ease;
+  pointer-events: none;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.floating-label-group textarea ~ label {
+  top: 1.25rem;
+  transform: none;
+}
+
+.floating-label-group input:focus ~ label,
+.floating-label-group input:not(:placeholder-shown) ~ label,
+.floating-label-group textarea:focus ~ label,
+.floating-label-group textarea:not(:placeholder-shown) ~ label {
+  top: 0.5rem;
+  transform: none;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Auto-save indicator animation */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.draft-saved {
+  animation: fadeInOut 2s ease-in-out forwards;
+}
+
+/* Section label pattern (uppercase small caps) */
+.section-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+/* Highlighted field (key outputs) */
+.field-highlighted {
+  border-left: 3px solid var(--accent-primary);
+  background-color: rgba(45, 90, 61, 0.04);
+  border-radius: 0 8px 8px 0;
+}
