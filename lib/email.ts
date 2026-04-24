@@ -1,18 +1,16 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = "SCL Platform <onboarding@resend.dev>"; // use resend.dev until custom domain is verified
 const APP_URL = process.env.AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
-
-// Dev mode: true when no real Resend key is configured
-const isDevMode =
-  !process.env.RESEND_API_KEY ||
-  process.env.RESEND_API_KEY === "re_REPLACE_WITH_RESEND_KEY" ||
-  process.env.RESEND_API_KEY.trim() === "";
 
 type EmailResult = { devUrl?: string };
 
 async function trySend(to: string, subject: string, html: string, devUrl: string): Promise<EmailResult> {
+  const key = process.env.RESEND_API_KEY;
+
+  // Dev mode: no key, placeholder key, or empty string
+  const isDevMode = !key || key === "re_REPLACE_WITH_RESEND_KEY" || key.trim() === "";
+
   if (isDevMode) {
     console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     console.log(`📧 [DEV EMAIL] To: ${to}`);
@@ -21,6 +19,10 @@ async function trySend(to: string, subject: string, html: string, devUrl: string
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
     return { devUrl };
   }
+
+  // Lazy-initialize Resend only at runtime, never at module evaluation time
+  const resend = new Resend(key);
+
   try {
     await resend.emails.send({ from: FROM, to, subject, html });
     return {};
