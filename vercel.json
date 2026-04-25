@@ -1,3 +1,11 @@
 {
-  "buildCommand": "npx prisma migrate deploy && next build"
+  "buildCommand": "npx prisma migrate deploy && next build",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "integrations": [
+    {
+      "slug": "neon",
+      "requiredFor": "build"
+    }
+  ]
 }
