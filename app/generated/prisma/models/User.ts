@@ -37,6 +37,7 @@ export type UserMinAggregateOutputType = {
   covenantSigned: boolean | null
   covenantSignedAt: Date | null
   readinessComplete: boolean | null
+  calendlyLink: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type UserMaxAggregateOutputType = {
   covenantSigned: boolean | null
   covenantSignedAt: Date | null
   readinessComplete: boolean | null
+  calendlyLink: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -68,6 +70,7 @@ export type UserCountAggregateOutputType = {
   covenantSignedAt: number
   covenantData: number
   readinessComplete: number
+  calendlyLink: number
   _all: number
 }
 
@@ -85,6 +88,7 @@ export type UserMinAggregateInputType = {
   covenantSigned?: true
   covenantSignedAt?: true
   readinessComplete?: true
+  calendlyLink?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -100,6 +104,7 @@ export type UserMaxAggregateInputType = {
   covenantSigned?: true
   covenantSignedAt?: true
   readinessComplete?: true
+  calendlyLink?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -116,6 +121,7 @@ export type UserCountAggregateInputType = {
   covenantSignedAt?: true
   covenantData?: true
   readinessComplete?: true
+  calendlyLink?: true
   _all?: true
 }
 
@@ -205,6 +211,7 @@ export type UserGroupByOutputType = {
   covenantSignedAt: Date | null
   covenantData: runtime.JsonValue | null
   readinessComplete: boolean
+  calendlyLink: string | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -242,6 +249,8 @@ export type UserWhereInput = {
   covenantSignedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   covenantData?: Prisma.JsonNullableFilter<"User">
   readinessComplete?: Prisma.BoolFilter<"User"> | boolean
+  calendlyLink?: Prisma.StringNullableFilter<"User"> | string | null
+  coachingSessions?: Prisma.CoachingSessionListRelationFilter
   participantProfile?: Prisma.XOR<Prisma.ParticipantProfileNullableScalarRelationFilter, Prisma.ParticipantProfileWhereInput> | null
   podMembership?: Prisma.XOR<Prisma.PodMemberNullableScalarRelationFilter, Prisma.PodMemberWhereInput> | null
   submissions?: Prisma.SubmissionListRelationFilter
@@ -258,6 +267,7 @@ export type UserWhereInput = {
   facilitatedPods?: Prisma.PodListRelationFilter
   systemSettingsUpdates?: Prisma.SystemSettingsListRelationFilter
   readinessAssessments?: Prisma.ReadinessAssessmentListRelationFilter
+  problemEntries?: Prisma.ProblemEntryListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -274,6 +284,8 @@ export type UserOrderByWithRelationInput = {
   covenantSignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   covenantData?: Prisma.SortOrderInput | Prisma.SortOrder
   readinessComplete?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  coachingSessions?: Prisma.CoachingSessionOrderByRelationAggregateInput
   participantProfile?: Prisma.ParticipantProfileOrderByWithRelationInput
   podMembership?: Prisma.PodMemberOrderByWithRelationInput
   submissions?: Prisma.SubmissionOrderByRelationAggregateInput
@@ -290,6 +302,7 @@ export type UserOrderByWithRelationInput = {
   facilitatedPods?: Prisma.PodOrderByRelationAggregateInput
   systemSettingsUpdates?: Prisma.SystemSettingsOrderByRelationAggregateInput
   readinessAssessments?: Prisma.ReadinessAssessmentOrderByRelationAggregateInput
+  problemEntries?: Prisma.ProblemEntryOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -309,6 +322,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   covenantSignedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   covenantData?: Prisma.JsonNullableFilter<"User">
   readinessComplete?: Prisma.BoolFilter<"User"> | boolean
+  calendlyLink?: Prisma.StringNullableFilter<"User"> | string | null
+  coachingSessions?: Prisma.CoachingSessionListRelationFilter
   participantProfile?: Prisma.XOR<Prisma.ParticipantProfileNullableScalarRelationFilter, Prisma.ParticipantProfileWhereInput> | null
   podMembership?: Prisma.XOR<Prisma.PodMemberNullableScalarRelationFilter, Prisma.PodMemberWhereInput> | null
   submissions?: Prisma.SubmissionListRelationFilter
@@ -325,6 +340,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   facilitatedPods?: Prisma.PodListRelationFilter
   systemSettingsUpdates?: Prisma.SystemSettingsListRelationFilter
   readinessAssessments?: Prisma.ReadinessAssessmentListRelationFilter
+  problemEntries?: Prisma.ProblemEntryListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -341,6 +357,7 @@ export type UserOrderByWithAggregationInput = {
   covenantSignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   covenantData?: Prisma.SortOrderInput | Prisma.SortOrder
   readinessComplete?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -363,6 +380,7 @@ export type UserScalarWhereWithAggregatesInput = {
   covenantSignedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   covenantData?: Prisma.JsonNullableWithAggregatesFilter<"User">
   readinessComplete?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  calendlyLink?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -379,6 +397,8 @@ export type UserCreateInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -395,6 +415,7 @@ export type UserCreateInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -411,6 +432,8 @@ export type UserUncheckedCreateInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -427,6 +450,7 @@ export type UserUncheckedCreateInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -443,6 +467,8 @@ export type UserUpdateInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -459,6 +485,7 @@ export type UserUpdateInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -475,6 +502,8 @@ export type UserUncheckedUpdateInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -491,6 +520,7 @@ export type UserUncheckedUpdateInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -507,6 +537,7 @@ export type UserCreateManyInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -523,6 +554,7 @@ export type UserUpdateManyMutationInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -539,6 +571,7 @@ export type UserUncheckedUpdateManyInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -555,6 +588,7 @@ export type UserCountOrderByAggregateInput = {
   covenantSignedAt?: Prisma.SortOrder
   covenantData?: Prisma.SortOrder
   readinessComplete?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -570,6 +604,7 @@ export type UserMaxOrderByAggregateInput = {
   covenantSigned?: Prisma.SortOrder
   covenantSignedAt?: Prisma.SortOrder
   readinessComplete?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -585,6 +620,7 @@ export type UserMinOrderByAggregateInput = {
   covenantSigned?: Prisma.SortOrder
   covenantSignedAt?: Prisma.SortOrder
   readinessComplete?: Prisma.SortOrder
+  calendlyLink?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -853,6 +889,34 @@ export type UserUpdateOneRequiredWithoutReadinessAssessmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReadinessAssessmentsInput, Prisma.UserUpdateWithoutReadinessAssessmentsInput>, Prisma.UserUncheckedUpdateWithoutReadinessAssessmentsInput>
 }
 
+export type UserCreateNestedOneWithoutProblemEntriesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProblemEntriesInput, Prisma.UserUncheckedCreateWithoutProblemEntriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProblemEntriesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProblemEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProblemEntriesInput, Prisma.UserUncheckedCreateWithoutProblemEntriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProblemEntriesInput
+  upsert?: Prisma.UserUpsertWithoutProblemEntriesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProblemEntriesInput, Prisma.UserUpdateWithoutProblemEntriesInput>, Prisma.UserUncheckedUpdateWithoutProblemEntriesInput>
+}
+
+export type UserCreateNestedOneWithoutCoachingSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoachingSessionsInput, Prisma.UserUncheckedCreateWithoutCoachingSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoachingSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCoachingSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoachingSessionsInput, Prisma.UserUncheckedCreateWithoutCoachingSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoachingSessionsInput
+  upsert?: Prisma.UserUpsertWithoutCoachingSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCoachingSessionsInput, Prisma.UserUpdateWithoutCoachingSessionsInput>, Prisma.UserUncheckedUpdateWithoutCoachingSessionsInput>
+}
+
 export type UserCreateWithoutParticipantProfileInput = {
   id?: string
   email: string
@@ -867,6 +931,8 @@ export type UserCreateWithoutParticipantProfileInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
   scorecards?: Prisma.ScorecardCreateNestedManyWithoutUserInput
@@ -882,6 +948,7 @@ export type UserCreateWithoutParticipantProfileInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutParticipantProfileInput = {
@@ -898,6 +965,8 @@ export type UserUncheckedCreateWithoutParticipantProfileInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
   scorecards?: Prisma.ScorecardUncheckedCreateNestedManyWithoutUserInput
@@ -913,6 +982,7 @@ export type UserUncheckedCreateWithoutParticipantProfileInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutParticipantProfileInput = {
@@ -945,6 +1015,8 @@ export type UserUpdateWithoutParticipantProfileInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUpdateManyWithoutUserNestedInput
@@ -960,6 +1032,7 @@ export type UserUpdateWithoutParticipantProfileInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutParticipantProfileInput = {
@@ -976,6 +1049,8 @@ export type UserUncheckedUpdateWithoutParticipantProfileInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUncheckedUpdateManyWithoutUserNestedInput
@@ -991,6 +1066,7 @@ export type UserUncheckedUpdateWithoutParticipantProfileInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutManagedCohortsInput = {
@@ -1007,6 +1083,8 @@ export type UserCreateWithoutManagedCohortsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -1022,6 +1100,7 @@ export type UserCreateWithoutManagedCohortsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutManagedCohortsInput = {
@@ -1038,6 +1117,8 @@ export type UserUncheckedCreateWithoutManagedCohortsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -1053,6 +1134,7 @@ export type UserUncheckedCreateWithoutManagedCohortsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutManagedCohortsInput = {
@@ -1085,6 +1167,8 @@ export type UserUpdateWithoutManagedCohortsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -1100,6 +1184,7 @@ export type UserUpdateWithoutManagedCohortsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutManagedCohortsInput = {
@@ -1116,6 +1201,8 @@ export type UserUncheckedUpdateWithoutManagedCohortsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -1131,6 +1218,7 @@ export type UserUncheckedUpdateWithoutManagedCohortsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFacilitatedPodsInput = {
@@ -1147,6 +1235,8 @@ export type UserCreateWithoutFacilitatedPodsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -1162,6 +1252,7 @@ export type UserCreateWithoutFacilitatedPodsInput = {
   managedCohorts?: Prisma.CohortAdminCreateNestedManyWithoutUserInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFacilitatedPodsInput = {
@@ -1178,6 +1269,8 @@ export type UserUncheckedCreateWithoutFacilitatedPodsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -1193,6 +1286,7 @@ export type UserUncheckedCreateWithoutFacilitatedPodsInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedCreateNestedManyWithoutUserInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFacilitatedPodsInput = {
@@ -1225,6 +1319,8 @@ export type UserUpdateWithoutFacilitatedPodsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -1240,6 +1336,7 @@ export type UserUpdateWithoutFacilitatedPodsInput = {
   managedCohorts?: Prisma.CohortAdminUpdateManyWithoutUserNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFacilitatedPodsInput = {
@@ -1256,6 +1353,8 @@ export type UserUncheckedUpdateWithoutFacilitatedPodsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -1271,6 +1370,7 @@ export type UserUncheckedUpdateWithoutFacilitatedPodsInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedUpdateManyWithoutUserNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPodMembershipInput = {
@@ -1287,6 +1387,8 @@ export type UserCreateWithoutPodMembershipInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
   scorecards?: Prisma.ScorecardCreateNestedManyWithoutUserInput
@@ -1302,6 +1404,7 @@ export type UserCreateWithoutPodMembershipInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPodMembershipInput = {
@@ -1318,6 +1421,8 @@ export type UserUncheckedCreateWithoutPodMembershipInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
   scorecards?: Prisma.ScorecardUncheckedCreateNestedManyWithoutUserInput
@@ -1333,6 +1438,7 @@ export type UserUncheckedCreateWithoutPodMembershipInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPodMembershipInput = {
@@ -1365,6 +1471,8 @@ export type UserUpdateWithoutPodMembershipInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUpdateManyWithoutUserNestedInput
@@ -1380,6 +1488,7 @@ export type UserUpdateWithoutPodMembershipInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPodMembershipInput = {
@@ -1396,6 +1505,8 @@ export type UserUncheckedUpdateWithoutPodMembershipInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUncheckedUpdateManyWithoutUserNestedInput
@@ -1411,6 +1522,7 @@ export type UserUncheckedUpdateWithoutPodMembershipInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubmissionsInput = {
@@ -1427,6 +1539,8 @@ export type UserCreateWithoutSubmissionsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   scorecards?: Prisma.ScorecardCreateNestedManyWithoutUserInput
@@ -1442,6 +1556,7 @@ export type UserCreateWithoutSubmissionsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -1458,6 +1573,8 @@ export type UserUncheckedCreateWithoutSubmissionsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   scorecards?: Prisma.ScorecardUncheckedCreateNestedManyWithoutUserInput
@@ -1473,6 +1590,7 @@ export type UserUncheckedCreateWithoutSubmissionsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -1505,6 +1623,8 @@ export type UserUpdateWithoutSubmissionsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUpdateManyWithoutUserNestedInput
@@ -1520,6 +1640,7 @@ export type UserUpdateWithoutSubmissionsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -1536,6 +1657,8 @@ export type UserUncheckedUpdateWithoutSubmissionsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   scorecards?: Prisma.ScorecardUncheckedUpdateManyWithoutUserNestedInput
@@ -1551,6 +1674,7 @@ export type UserUncheckedUpdateWithoutSubmissionsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGateReviewsInput = {
@@ -1567,6 +1691,8 @@ export type UserCreateWithoutGateReviewsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -1582,6 +1708,7 @@ export type UserCreateWithoutGateReviewsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGateReviewsInput = {
@@ -1598,6 +1725,8 @@ export type UserUncheckedCreateWithoutGateReviewsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -1613,6 +1742,7 @@ export type UserUncheckedCreateWithoutGateReviewsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGateReviewsInput = {
@@ -1645,6 +1775,8 @@ export type UserUpdateWithoutGateReviewsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -1660,6 +1792,7 @@ export type UserUpdateWithoutGateReviewsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGateReviewsInput = {
@@ -1676,6 +1809,8 @@ export type UserUncheckedUpdateWithoutGateReviewsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -1691,6 +1826,7 @@ export type UserUncheckedUpdateWithoutGateReviewsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutScorecardsInput = {
@@ -1707,6 +1843,8 @@ export type UserCreateWithoutScorecardsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -1722,6 +1860,7 @@ export type UserCreateWithoutScorecardsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutScorecardsInput = {
@@ -1738,6 +1877,8 @@ export type UserUncheckedCreateWithoutScorecardsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -1753,6 +1894,7 @@ export type UserUncheckedCreateWithoutScorecardsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutScorecardsInput = {
@@ -1785,6 +1927,8 @@ export type UserUpdateWithoutScorecardsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -1800,6 +1944,7 @@ export type UserUpdateWithoutScorecardsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutScorecardsInput = {
@@ -1816,6 +1961,8 @@ export type UserUncheckedUpdateWithoutScorecardsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -1831,6 +1978,7 @@ export type UserUncheckedUpdateWithoutScorecardsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutJournalsInput = {
@@ -1847,6 +1995,8 @@ export type UserCreateWithoutJournalsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -1862,6 +2012,7 @@ export type UserCreateWithoutJournalsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutJournalsInput = {
@@ -1878,6 +2029,8 @@ export type UserUncheckedCreateWithoutJournalsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -1893,6 +2046,7 @@ export type UserUncheckedCreateWithoutJournalsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutJournalsInput = {
@@ -1925,6 +2079,8 @@ export type UserUpdateWithoutJournalsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -1940,6 +2096,7 @@ export type UserUpdateWithoutJournalsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJournalsInput = {
@@ -1956,6 +2113,8 @@ export type UserUncheckedUpdateWithoutJournalsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -1971,6 +2130,7 @@ export type UserUncheckedUpdateWithoutJournalsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSentCoachingNotesInput = {
@@ -1987,6 +2147,8 @@ export type UserCreateWithoutSentCoachingNotesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2002,6 +2164,7 @@ export type UserCreateWithoutSentCoachingNotesInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSentCoachingNotesInput = {
@@ -2018,6 +2181,8 @@ export type UserUncheckedCreateWithoutSentCoachingNotesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2033,6 +2198,7 @@ export type UserUncheckedCreateWithoutSentCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSentCoachingNotesInput = {
@@ -2054,6 +2220,8 @@ export type UserCreateWithoutReceivedCoachingNotesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2069,6 +2237,7 @@ export type UserCreateWithoutReceivedCoachingNotesInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReceivedCoachingNotesInput = {
@@ -2085,6 +2254,8 @@ export type UserUncheckedCreateWithoutReceivedCoachingNotesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2100,6 +2271,7 @@ export type UserUncheckedCreateWithoutReceivedCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReceivedCoachingNotesInput = {
@@ -2132,6 +2304,8 @@ export type UserUpdateWithoutSentCoachingNotesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2147,6 +2321,7 @@ export type UserUpdateWithoutSentCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSentCoachingNotesInput = {
@@ -2163,6 +2338,8 @@ export type UserUncheckedUpdateWithoutSentCoachingNotesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2178,6 +2355,7 @@ export type UserUncheckedUpdateWithoutSentCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReceivedCoachingNotesInput = {
@@ -2205,6 +2383,8 @@ export type UserUpdateWithoutReceivedCoachingNotesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2220,6 +2400,7 @@ export type UserUpdateWithoutReceivedCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReceivedCoachingNotesInput = {
@@ -2236,6 +2417,8 @@ export type UserUncheckedUpdateWithoutReceivedCoachingNotesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2251,6 +2434,7 @@ export type UserUncheckedUpdateWithoutReceivedCoachingNotesInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInvitationsSentInput = {
@@ -2267,6 +2451,8 @@ export type UserCreateWithoutInvitationsSentInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2282,6 +2468,7 @@ export type UserCreateWithoutInvitationsSentInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInvitationsSentInput = {
@@ -2298,6 +2485,8 @@ export type UserUncheckedCreateWithoutInvitationsSentInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2313,6 +2502,7 @@ export type UserUncheckedCreateWithoutInvitationsSentInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInvitationsSentInput = {
@@ -2334,6 +2524,8 @@ export type UserCreateWithoutInvitationInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2349,6 +2541,7 @@ export type UserCreateWithoutInvitationInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInvitationInput = {
@@ -2365,6 +2558,8 @@ export type UserUncheckedCreateWithoutInvitationInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2380,6 +2575,7 @@ export type UserUncheckedCreateWithoutInvitationInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInvitationInput = {
@@ -2412,6 +2608,8 @@ export type UserUpdateWithoutInvitationsSentInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2427,6 +2625,7 @@ export type UserUpdateWithoutInvitationsSentInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInvitationsSentInput = {
@@ -2443,6 +2642,8 @@ export type UserUncheckedUpdateWithoutInvitationsSentInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2458,6 +2659,7 @@ export type UserUncheckedUpdateWithoutInvitationsSentInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutInvitationInput = {
@@ -2485,6 +2687,8 @@ export type UserUpdateWithoutInvitationInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2500,6 +2704,7 @@ export type UserUpdateWithoutInvitationInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInvitationInput = {
@@ -2516,6 +2721,8 @@ export type UserUncheckedUpdateWithoutInvitationInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2531,6 +2738,7 @@ export type UserUncheckedUpdateWithoutInvitationInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2547,6 +2755,8 @@ export type UserCreateWithoutNotificationsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2562,6 +2772,7 @@ export type UserCreateWithoutNotificationsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2578,6 +2789,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2593,6 +2806,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2625,6 +2839,8 @@ export type UserUpdateWithoutNotificationsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2640,6 +2856,7 @@ export type UserUpdateWithoutNotificationsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2656,6 +2873,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2671,6 +2890,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2687,6 +2907,8 @@ export type UserCreateWithoutAuditLogsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2702,6 +2924,7 @@ export type UserCreateWithoutAuditLogsInput = {
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2718,6 +2941,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2733,6 +2958,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2765,6 +2991,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2780,6 +3008,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2796,6 +3025,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2811,6 +3042,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSystemSettingsUpdatesInput = {
@@ -2827,6 +3059,8 @@ export type UserCreateWithoutSystemSettingsUpdatesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2842,6 +3076,7 @@ export type UserCreateWithoutSystemSettingsUpdatesInput = {
   managedCohorts?: Prisma.CohortAdminCreateNestedManyWithoutUserInput
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSystemSettingsUpdatesInput = {
@@ -2858,6 +3093,8 @@ export type UserUncheckedCreateWithoutSystemSettingsUpdatesInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -2873,6 +3110,7 @@ export type UserUncheckedCreateWithoutSystemSettingsUpdatesInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedCreateNestedManyWithoutUserInput
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSystemSettingsUpdatesInput = {
@@ -2905,6 +3143,8 @@ export type UserUpdateWithoutSystemSettingsUpdatesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -2920,6 +3160,7 @@ export type UserUpdateWithoutSystemSettingsUpdatesInput = {
   managedCohorts?: Prisma.CohortAdminUpdateManyWithoutUserNestedInput
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSystemSettingsUpdatesInput = {
@@ -2936,6 +3177,8 @@ export type UserUncheckedUpdateWithoutSystemSettingsUpdatesInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -2951,6 +3194,7 @@ export type UserUncheckedUpdateWithoutSystemSettingsUpdatesInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedUpdateManyWithoutUserNestedInput
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReadinessAssessmentsInput = {
@@ -2967,6 +3211,8 @@ export type UserCreateWithoutReadinessAssessmentsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
@@ -2982,6 +3228,7 @@ export type UserCreateWithoutReadinessAssessmentsInput = {
   managedCohorts?: Prisma.CohortAdminCreateNestedManyWithoutUserInput
   facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReadinessAssessmentsInput = {
@@ -2998,6 +3245,8 @@ export type UserUncheckedCreateWithoutReadinessAssessmentsInput = {
   covenantSignedAt?: Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
   participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
   podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
@@ -3013,6 +3262,7 @@ export type UserUncheckedCreateWithoutReadinessAssessmentsInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedCreateNestedManyWithoutUserInput
   facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReadinessAssessmentsInput = {
@@ -3045,6 +3295,8 @@ export type UserUpdateWithoutReadinessAssessmentsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
@@ -3060,6 +3312,7 @@ export type UserUpdateWithoutReadinessAssessmentsInput = {
   managedCohorts?: Prisma.CohortAdminUpdateManyWithoutUserNestedInput
   facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReadinessAssessmentsInput = {
@@ -3076,6 +3329,8 @@ export type UserUncheckedUpdateWithoutReadinessAssessmentsInput = {
   covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
   participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
   podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
@@ -3091,6 +3346,311 @@ export type UserUncheckedUpdateWithoutReadinessAssessmentsInput = {
   managedCohorts?: Prisma.CohortAdminUncheckedUpdateManyWithoutUserNestedInput
   facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
   systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProblemEntriesInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role?: $Enums.Role
+  emailVerified?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  covenantSigned?: boolean
+  covenantSignedAt?: Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionCreateNestedManyWithoutParticipantInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
+  podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
+  scorecards?: Prisma.ScorecardCreateNestedManyWithoutUserInput
+  journals?: Prisma.JournalEntryCreateNestedManyWithoutUserInput
+  sentCoachingNotes?: Prisma.CoachingNoteCreateNestedManyWithoutAuthorInput
+  receivedCoachingNotes?: Prisma.CoachingNoteCreateNestedManyWithoutRecipientInput
+  gateReviews?: Prisma.GateReviewCreateNestedManyWithoutReviewerInput
+  invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  invitation?: Prisma.InvitationCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  managedCohorts?: Prisma.CohortAdminCreateNestedManyWithoutUserInput
+  facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
+  systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
+  readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProblemEntriesInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role?: $Enums.Role
+  emailVerified?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  covenantSigned?: boolean
+  covenantSignedAt?: Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: boolean
+  calendlyLink?: string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedCreateNestedManyWithoutParticipantInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
+  podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
+  scorecards?: Prisma.ScorecardUncheckedCreateNestedManyWithoutUserInput
+  journals?: Prisma.JournalEntryUncheckedCreateNestedManyWithoutUserInput
+  sentCoachingNotes?: Prisma.CoachingNoteUncheckedCreateNestedManyWithoutAuthorInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUncheckedCreateNestedManyWithoutRecipientInput
+  gateReviews?: Prisma.GateReviewUncheckedCreateNestedManyWithoutReviewerInput
+  invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  managedCohorts?: Prisma.CohortAdminUncheckedCreateNestedManyWithoutUserInput
+  facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProblemEntriesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProblemEntriesInput, Prisma.UserUncheckedCreateWithoutProblemEntriesInput>
+}
+
+export type UserUpsertWithoutProblemEntriesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProblemEntriesInput, Prisma.UserUncheckedUpdateWithoutProblemEntriesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProblemEntriesInput, Prisma.UserUncheckedCreateWithoutProblemEntriesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProblemEntriesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProblemEntriesInput, Prisma.UserUncheckedUpdateWithoutProblemEntriesInput>
+}
+
+export type UserUpdateWithoutProblemEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  covenantSigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUpdateManyWithoutParticipantNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
+  podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
+  scorecards?: Prisma.ScorecardUpdateManyWithoutUserNestedInput
+  journals?: Prisma.JournalEntryUpdateManyWithoutUserNestedInput
+  sentCoachingNotes?: Prisma.CoachingNoteUpdateManyWithoutAuthorNestedInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUpdateManyWithoutRecipientNestedInput
+  gateReviews?: Prisma.GateReviewUpdateManyWithoutReviewerNestedInput
+  invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  invitation?: Prisma.InvitationUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  managedCohorts?: Prisma.CohortAdminUpdateManyWithoutUserNestedInput
+  facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProblemEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  covenantSigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coachingSessions?: Prisma.CoachingSessionUncheckedUpdateManyWithoutParticipantNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
+  podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
+  scorecards?: Prisma.ScorecardUncheckedUpdateManyWithoutUserNestedInput
+  journals?: Prisma.JournalEntryUncheckedUpdateManyWithoutUserNestedInput
+  sentCoachingNotes?: Prisma.CoachingNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUncheckedUpdateManyWithoutRecipientNestedInput
+  gateReviews?: Prisma.GateReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  invitation?: Prisma.InvitationUncheckedUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  managedCohorts?: Prisma.CohortAdminUncheckedUpdateManyWithoutUserNestedInput
+  facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCoachingSessionsInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role?: $Enums.Role
+  emailVerified?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  covenantSigned?: boolean
+  covenantSignedAt?: Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: boolean
+  calendlyLink?: string | null
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
+  podMembership?: Prisma.PodMemberCreateNestedOneWithoutUserInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutUserInput
+  scorecards?: Prisma.ScorecardCreateNestedManyWithoutUserInput
+  journals?: Prisma.JournalEntryCreateNestedManyWithoutUserInput
+  sentCoachingNotes?: Prisma.CoachingNoteCreateNestedManyWithoutAuthorInput
+  receivedCoachingNotes?: Prisma.CoachingNoteCreateNestedManyWithoutRecipientInput
+  gateReviews?: Prisma.GateReviewCreateNestedManyWithoutReviewerInput
+  invitationsSent?: Prisma.InvitationCreateNestedManyWithoutInvitedByInput
+  invitation?: Prisma.InvitationCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  managedCohorts?: Prisma.CohortAdminCreateNestedManyWithoutUserInput
+  facilitatedPods?: Prisma.PodCreateNestedManyWithoutFacilitatorInput
+  systemSettingsUpdates?: Prisma.SystemSettingsCreateNestedManyWithoutUpdatedByInput
+  readinessAssessments?: Prisma.ReadinessAssessmentCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCoachingSessionsInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role?: $Enums.Role
+  emailVerified?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  covenantSigned?: boolean
+  covenantSignedAt?: Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: boolean
+  calendlyLink?: string | null
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
+  podMembership?: Prisma.PodMemberUncheckedCreateNestedOneWithoutUserInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutUserInput
+  scorecards?: Prisma.ScorecardUncheckedCreateNestedManyWithoutUserInput
+  journals?: Prisma.JournalEntryUncheckedCreateNestedManyWithoutUserInput
+  sentCoachingNotes?: Prisma.CoachingNoteUncheckedCreateNestedManyWithoutAuthorInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUncheckedCreateNestedManyWithoutRecipientInput
+  gateReviews?: Prisma.GateReviewUncheckedCreateNestedManyWithoutReviewerInput
+  invitationsSent?: Prisma.InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  managedCohorts?: Prisma.CohortAdminUncheckedCreateNestedManyWithoutUserInput
+  facilitatedPods?: Prisma.PodUncheckedCreateNestedManyWithoutFacilitatorInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUncheckedCreateNestedManyWithoutUpdatedByInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUncheckedCreateNestedManyWithoutUserInput
+  problemEntries?: Prisma.ProblemEntryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCoachingSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoachingSessionsInput, Prisma.UserUncheckedCreateWithoutCoachingSessionsInput>
+}
+
+export type UserUpsertWithoutCoachingSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCoachingSessionsInput, Prisma.UserUncheckedUpdateWithoutCoachingSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoachingSessionsInput, Prisma.UserUncheckedCreateWithoutCoachingSessionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCoachingSessionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCoachingSessionsInput, Prisma.UserUncheckedUpdateWithoutCoachingSessionsInput>
+}
+
+export type UserUpdateWithoutCoachingSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  covenantSigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
+  podMembership?: Prisma.PodMemberUpdateOneWithoutUserNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutUserNestedInput
+  scorecards?: Prisma.ScorecardUpdateManyWithoutUserNestedInput
+  journals?: Prisma.JournalEntryUpdateManyWithoutUserNestedInput
+  sentCoachingNotes?: Prisma.CoachingNoteUpdateManyWithoutAuthorNestedInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUpdateManyWithoutRecipientNestedInput
+  gateReviews?: Prisma.GateReviewUpdateManyWithoutReviewerNestedInput
+  invitationsSent?: Prisma.InvitationUpdateManyWithoutInvitedByNestedInput
+  invitation?: Prisma.InvitationUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  managedCohorts?: Prisma.CohortAdminUpdateManyWithoutUserNestedInput
+  facilitatedPods?: Prisma.PodUpdateManyWithoutFacilitatorNestedInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUpdateManyWithoutUpdatedByNestedInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCoachingSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  covenantSigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  covenantSignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  covenantData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  readinessComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  calendlyLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
+  podMembership?: Prisma.PodMemberUncheckedUpdateOneWithoutUserNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutUserNestedInput
+  scorecards?: Prisma.ScorecardUncheckedUpdateManyWithoutUserNestedInput
+  journals?: Prisma.JournalEntryUncheckedUpdateManyWithoutUserNestedInput
+  sentCoachingNotes?: Prisma.CoachingNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedCoachingNotes?: Prisma.CoachingNoteUncheckedUpdateManyWithoutRecipientNestedInput
+  gateReviews?: Prisma.GateReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  invitationsSent?: Prisma.InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  invitation?: Prisma.InvitationUncheckedUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  managedCohorts?: Prisma.CohortAdminUncheckedUpdateManyWithoutUserNestedInput
+  facilitatedPods?: Prisma.PodUncheckedUpdateManyWithoutFacilitatorNestedInput
+  systemSettingsUpdates?: Prisma.SystemSettingsUncheckedUpdateManyWithoutUpdatedByNestedInput
+  readinessAssessments?: Prisma.ReadinessAssessmentUncheckedUpdateManyWithoutUserNestedInput
+  problemEntries?: Prisma.ProblemEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -3099,6 +3659,7 @@ export type UserUncheckedUpdateWithoutReadinessAssessmentsInput = {
  */
 
 export type UserCountOutputType = {
+  coachingSessions: number
   submissions: number
   scorecards: number
   journals: number
@@ -3112,9 +3673,11 @@ export type UserCountOutputType = {
   facilitatedPods: number
   systemSettingsUpdates: number
   readinessAssessments: number
+  problemEntries: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  coachingSessions?: boolean | UserCountOutputTypeCountCoachingSessionsArgs
   submissions?: boolean | UserCountOutputTypeCountSubmissionsArgs
   scorecards?: boolean | UserCountOutputTypeCountScorecardsArgs
   journals?: boolean | UserCountOutputTypeCountJournalsArgs
@@ -3128,6 +3691,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   facilitatedPods?: boolean | UserCountOutputTypeCountFacilitatedPodsArgs
   systemSettingsUpdates?: boolean | UserCountOutputTypeCountSystemSettingsUpdatesArgs
   readinessAssessments?: boolean | UserCountOutputTypeCountReadinessAssessmentsArgs
+  problemEntries?: boolean | UserCountOutputTypeCountProblemEntriesArgs
 }
 
 /**
@@ -3138,6 +3702,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCoachingSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoachingSessionWhereInput
 }
 
 /**
@@ -3231,6 +3802,13 @@ export type UserCountOutputTypeCountReadinessAssessmentsArgs<ExtArgs extends run
   where?: Prisma.ReadinessAssessmentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProblemEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProblemEntryWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3246,6 +3824,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   covenantSignedAt?: boolean
   covenantData?: boolean
   readinessComplete?: boolean
+  calendlyLink?: boolean
+  coachingSessions?: boolean | Prisma.User$coachingSessionsArgs<ExtArgs>
   participantProfile?: boolean | Prisma.User$participantProfileArgs<ExtArgs>
   podMembership?: boolean | Prisma.User$podMembershipArgs<ExtArgs>
   submissions?: boolean | Prisma.User$submissionsArgs<ExtArgs>
@@ -3262,6 +3842,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   facilitatedPods?: boolean | Prisma.User$facilitatedPodsArgs<ExtArgs>
   systemSettingsUpdates?: boolean | Prisma.User$systemSettingsUpdatesArgs<ExtArgs>
   readinessAssessments?: boolean | Prisma.User$readinessAssessmentsArgs<ExtArgs>
+  problemEntries?: boolean | Prisma.User$problemEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3279,6 +3860,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   covenantSignedAt?: boolean
   covenantData?: boolean
   readinessComplete?: boolean
+  calendlyLink?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3295,6 +3877,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   covenantSignedAt?: boolean
   covenantData?: boolean
   readinessComplete?: boolean
+  calendlyLink?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -3311,10 +3894,12 @@ export type UserSelectScalar = {
   covenantSignedAt?: boolean
   covenantData?: boolean
   readinessComplete?: boolean
+  calendlyLink?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "role" | "emailVerified" | "isActive" | "createdAt" | "updatedAt" | "covenantSigned" | "covenantSignedAt" | "covenantData" | "readinessComplete", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "role" | "emailVerified" | "isActive" | "createdAt" | "updatedAt" | "covenantSigned" | "covenantSignedAt" | "covenantData" | "readinessComplete" | "calendlyLink", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  coachingSessions?: boolean | Prisma.User$coachingSessionsArgs<ExtArgs>
   participantProfile?: boolean | Prisma.User$participantProfileArgs<ExtArgs>
   podMembership?: boolean | Prisma.User$podMembershipArgs<ExtArgs>
   submissions?: boolean | Prisma.User$submissionsArgs<ExtArgs>
@@ -3331,6 +3916,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   facilitatedPods?: boolean | Prisma.User$facilitatedPodsArgs<ExtArgs>
   systemSettingsUpdates?: boolean | Prisma.User$systemSettingsUpdatesArgs<ExtArgs>
   readinessAssessments?: boolean | Prisma.User$readinessAssessmentsArgs<ExtArgs>
+  problemEntries?: boolean | Prisma.User$problemEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3339,6 +3925,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    coachingSessions: Prisma.$CoachingSessionPayload<ExtArgs>[]
     participantProfile: Prisma.$ParticipantProfilePayload<ExtArgs> | null
     podMembership: Prisma.$PodMemberPayload<ExtArgs> | null
     submissions: Prisma.$SubmissionPayload<ExtArgs>[]
@@ -3355,6 +3942,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     facilitatedPods: Prisma.$PodPayload<ExtArgs>[]
     systemSettingsUpdates: Prisma.$SystemSettingsPayload<ExtArgs>[]
     readinessAssessments: Prisma.$ReadinessAssessmentPayload<ExtArgs>[]
+    problemEntries: Prisma.$ProblemEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3370,6 +3958,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     covenantSignedAt: Date | null
     covenantData: runtime.JsonValue | null
     readinessComplete: boolean
+    calendlyLink: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -3764,6 +4353,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  coachingSessions<T extends Prisma.User$coachingSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$coachingSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoachingSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   participantProfile<T extends Prisma.User$participantProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$participantProfileArgs<ExtArgs>>): Prisma.Prisma__ParticipantProfileClient<runtime.Types.Result.GetResult<Prisma.$ParticipantProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   podMembership<T extends Prisma.User$podMembershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$podMembershipArgs<ExtArgs>>): Prisma.Prisma__PodMemberClient<runtime.Types.Result.GetResult<Prisma.$PodMemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   submissions<T extends Prisma.User$submissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3780,6 +4370,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   facilitatedPods<T extends Prisma.User$facilitatedPodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$facilitatedPodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   systemSettingsUpdates<T extends Prisma.User$systemSettingsUpdatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$systemSettingsUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SystemSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   readinessAssessments<T extends Prisma.User$readinessAssessmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$readinessAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReadinessAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  problemEntries<T extends Prisma.User$problemEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$problemEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProblemEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3822,6 +4413,7 @@ export interface UserFieldRefs {
   readonly covenantSignedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly covenantData: Prisma.FieldRef<"User", 'Json'>
   readonly readinessComplete: Prisma.FieldRef<"User", 'Boolean'>
+  readonly calendlyLink: Prisma.FieldRef<"User", 'String'>
 }
     
 
@@ -4215,6 +4807,30 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * User.coachingSessions
+ */
+export type User$coachingSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CoachingSession
+   */
+  select?: Prisma.CoachingSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CoachingSession
+   */
+  omit?: Prisma.CoachingSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoachingSessionInclude<ExtArgs> | null
+  where?: Prisma.CoachingSessionWhereInput
+  orderBy?: Prisma.CoachingSessionOrderByWithRelationInput | Prisma.CoachingSessionOrderByWithRelationInput[]
+  cursor?: Prisma.CoachingSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoachingSessionScalarFieldEnum | Prisma.CoachingSessionScalarFieldEnum[]
+}
+
+/**
  * User.participantProfile
  */
 export type User$participantProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4581,6 +5197,30 @@ export type User$readinessAssessmentsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ReadinessAssessmentScalarFieldEnum | Prisma.ReadinessAssessmentScalarFieldEnum[]
+}
+
+/**
+ * User.problemEntries
+ */
+export type User$problemEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProblemEntry
+   */
+  select?: Prisma.ProblemEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProblemEntry
+   */
+  omit?: Prisma.ProblemEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProblemEntryInclude<ExtArgs> | null
+  where?: Prisma.ProblemEntryWhereInput
+  orderBy?: Prisma.ProblemEntryOrderByWithRelationInput | Prisma.ProblemEntryOrderByWithRelationInput[]
+  cursor?: Prisma.ProblemEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProblemEntryScalarFieldEnum | Prisma.ProblemEntryScalarFieldEnum[]
 }
 
 /**

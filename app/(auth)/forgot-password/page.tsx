@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <SplitLayout imageSrc="/images/coastline.jpg" imageAlt="Coastal landscape">
+    <SplitLayout imageSrc="/images/big-sur.jpg" imageAlt="Coastal landscape">
       {sent ? (
         <div className="text-center py-4">
           <div className="w-12 h-12 bg-[rgba(45,90,61,0.1)] rounded-full flex items-center justify-center mx-auto mb-4">

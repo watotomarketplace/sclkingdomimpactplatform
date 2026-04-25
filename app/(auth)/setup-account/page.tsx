@@ -112,7 +112,7 @@ function SetupAccountForm() {
 
 export default function SetupAccountPage() {
   return (
-    <SplitLayout imageSrc="/images/coastline.jpg" imageAlt="Coastal landscape">
+    <SplitLayout imageSrc="/images/big-sur.jpg" imageAlt="Coastal landscape">
       <Suspense fallback={
         <div className="flex justify-center py-8">
           <div className="w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full animate-spin" />

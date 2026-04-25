@@ -39,6 +39,8 @@ export type ParticipantProfileMinAggregateOutputType = {
   userId: string | null
   cohortId: string | null
   currentMonth: number | null
+  category: $Enums.ParticipantCategory | null
+  attendanceConfirmed: boolean | null
   createdAt: Date | null
 }
 
@@ -47,6 +49,8 @@ export type ParticipantProfileMaxAggregateOutputType = {
   userId: string | null
   cohortId: string | null
   currentMonth: number | null
+  category: $Enums.ParticipantCategory | null
+  attendanceConfirmed: boolean | null
   createdAt: Date | null
 }
 
@@ -55,6 +59,8 @@ export type ParticipantProfileCountAggregateOutputType = {
   userId: number
   cohortId: number
   currentMonth: number
+  category: number
+  attendanceConfirmed: number
   createdAt: number
   _all: number
 }
@@ -73,6 +79,8 @@ export type ParticipantProfileMinAggregateInputType = {
   userId?: true
   cohortId?: true
   currentMonth?: true
+  category?: true
+  attendanceConfirmed?: true
   createdAt?: true
 }
 
@@ -81,6 +89,8 @@ export type ParticipantProfileMaxAggregateInputType = {
   userId?: true
   cohortId?: true
   currentMonth?: true
+  category?: true
+  attendanceConfirmed?: true
   createdAt?: true
 }
 
@@ -89,6 +99,8 @@ export type ParticipantProfileCountAggregateInputType = {
   userId?: true
   cohortId?: true
   currentMonth?: true
+  category?: true
+  attendanceConfirmed?: true
   createdAt?: true
   _all?: true
 }
@@ -184,6 +196,8 @@ export type ParticipantProfileGroupByOutputType = {
   userId: string
   cohortId: string | null
   currentMonth: number
+  category: $Enums.ParticipantCategory | null
+  attendanceConfirmed: boolean
   createdAt: Date
   _count: ParticipantProfileCountAggregateOutputType | null
   _avg: ParticipantProfileAvgAggregateOutputType | null
@@ -215,6 +229,8 @@ export type ParticipantProfileWhereInput = {
   userId?: Prisma.StringFilter<"ParticipantProfile"> | string
   cohortId?: Prisma.StringNullableFilter<"ParticipantProfile"> | string | null
   currentMonth?: Prisma.IntFilter<"ParticipantProfile"> | number
+  category?: Prisma.EnumParticipantCategoryNullableFilter<"ParticipantProfile"> | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFilter<"ParticipantProfile"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ParticipantProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   cohort?: Prisma.XOR<Prisma.CohortNullableScalarRelationFilter, Prisma.CohortWhereInput> | null
@@ -225,6 +241,8 @@ export type ParticipantProfileOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   cohortId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentMonth?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  attendanceConfirmed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   cohort?: Prisma.CohortOrderByWithRelationInput
@@ -238,6 +256,8 @@ export type ParticipantProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ParticipantProfileWhereInput | Prisma.ParticipantProfileWhereInput[]
   cohortId?: Prisma.StringNullableFilter<"ParticipantProfile"> | string | null
   currentMonth?: Prisma.IntFilter<"ParticipantProfile"> | number
+  category?: Prisma.EnumParticipantCategoryNullableFilter<"ParticipantProfile"> | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFilter<"ParticipantProfile"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ParticipantProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   cohort?: Prisma.XOR<Prisma.CohortNullableScalarRelationFilter, Prisma.CohortWhereInput> | null
@@ -248,6 +268,8 @@ export type ParticipantProfileOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   cohortId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentMonth?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  attendanceConfirmed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ParticipantProfileCountOrderByAggregateInput
   _avg?: Prisma.ParticipantProfileAvgOrderByAggregateInput
@@ -264,12 +286,16 @@ export type ParticipantProfileScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"ParticipantProfile"> | string
   cohortId?: Prisma.StringNullableWithAggregatesFilter<"ParticipantProfile"> | string | null
   currentMonth?: Prisma.IntWithAggregatesFilter<"ParticipantProfile"> | number
+  category?: Prisma.EnumParticipantCategoryNullableWithAggregatesFilter<"ParticipantProfile"> | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolWithAggregatesFilter<"ParticipantProfile"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ParticipantProfile"> | Date | string
 }
 
 export type ParticipantProfileCreateInput = {
   id?: string
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutParticipantProfileInput
   cohort?: Prisma.CohortCreateNestedOneWithoutParticipantsInput
@@ -280,12 +306,16 @@ export type ParticipantProfileUncheckedCreateInput = {
   userId: string
   cohortId?: string | null
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
 }
 
 export type ParticipantProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutParticipantProfileNestedInput
   cohort?: Prisma.CohortUpdateOneWithoutParticipantsNestedInput
@@ -296,6 +326,8 @@ export type ParticipantProfileUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cohortId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -304,12 +336,16 @@ export type ParticipantProfileCreateManyInput = {
   userId: string
   cohortId?: string | null
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
 }
 
 export type ParticipantProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -318,6 +354,8 @@ export type ParticipantProfileUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   cohortId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -331,6 +369,8 @@ export type ParticipantProfileCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   cohortId?: Prisma.SortOrder
   currentMonth?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  attendanceConfirmed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -343,6 +383,8 @@ export type ParticipantProfileMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   cohortId?: Prisma.SortOrder
   currentMonth?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  attendanceConfirmed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -351,6 +393,8 @@ export type ParticipantProfileMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   cohortId?: Prisma.SortOrder
   currentMonth?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  attendanceConfirmed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -408,6 +452,10 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableEnumParticipantCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.ParticipantCategory | null
+}
+
 export type ParticipantProfileCreateNestedManyWithoutCohortInput = {
   create?: Prisma.XOR<Prisma.ParticipantProfileCreateWithoutCohortInput, Prisma.ParticipantProfileUncheckedCreateWithoutCohortInput> | Prisma.ParticipantProfileCreateWithoutCohortInput[] | Prisma.ParticipantProfileUncheckedCreateWithoutCohortInput[]
   connectOrCreate?: Prisma.ParticipantProfileCreateOrConnectWithoutCohortInput | Prisma.ParticipantProfileCreateOrConnectWithoutCohortInput[]
@@ -453,6 +501,8 @@ export type ParticipantProfileUncheckedUpdateManyWithoutCohortNestedInput = {
 export type ParticipantProfileCreateWithoutUserInput = {
   id?: string
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
   cohort?: Prisma.CohortCreateNestedOneWithoutParticipantsInput
 }
@@ -461,6 +511,8 @@ export type ParticipantProfileUncheckedCreateWithoutUserInput = {
   id?: string
   cohortId?: string | null
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
 }
 
@@ -483,6 +535,8 @@ export type ParticipantProfileUpdateToOneWithWhereWithoutUserInput = {
 export type ParticipantProfileUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cohort?: Prisma.CohortUpdateOneWithoutParticipantsNestedInput
 }
@@ -491,12 +545,16 @@ export type ParticipantProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   cohortId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ParticipantProfileCreateWithoutCohortInput = {
   id?: string
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutParticipantProfileInput
 }
@@ -505,6 +563,8 @@ export type ParticipantProfileUncheckedCreateWithoutCohortInput = {
   id?: string
   userId: string
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
 }
 
@@ -542,6 +602,8 @@ export type ParticipantProfileScalarWhereInput = {
   userId?: Prisma.StringFilter<"ParticipantProfile"> | string
   cohortId?: Prisma.StringNullableFilter<"ParticipantProfile"> | string | null
   currentMonth?: Prisma.IntFilter<"ParticipantProfile"> | number
+  category?: Prisma.EnumParticipantCategoryNullableFilter<"ParticipantProfile"> | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFilter<"ParticipantProfile"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ParticipantProfile"> | Date | string
 }
 
@@ -549,12 +611,16 @@ export type ParticipantProfileCreateManyCohortInput = {
   id?: string
   userId: string
   currentMonth?: number
+  category?: $Enums.ParticipantCategory | null
+  attendanceConfirmed?: boolean
   createdAt?: Date | string
 }
 
 export type ParticipantProfileUpdateWithoutCohortInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutParticipantProfileNestedInput
 }
@@ -563,6 +629,8 @@ export type ParticipantProfileUncheckedUpdateWithoutCohortInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -570,6 +638,8 @@ export type ParticipantProfileUncheckedUpdateManyWithoutCohortInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   currentMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.NullableEnumParticipantCategoryFieldUpdateOperationsInput | $Enums.ParticipantCategory | null
+  attendanceConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -580,6 +650,8 @@ export type ParticipantProfileSelect<ExtArgs extends runtime.Types.Extensions.In
   userId?: boolean
   cohortId?: boolean
   currentMonth?: boolean
+  category?: boolean
+  attendanceConfirmed?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cohort?: boolean | Prisma.ParticipantProfile$cohortArgs<ExtArgs>
@@ -590,6 +662,8 @@ export type ParticipantProfileSelectCreateManyAndReturn<ExtArgs extends runtime.
   userId?: boolean
   cohortId?: boolean
   currentMonth?: boolean
+  category?: boolean
+  attendanceConfirmed?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cohort?: boolean | Prisma.ParticipantProfile$cohortArgs<ExtArgs>
@@ -600,6 +674,8 @@ export type ParticipantProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.
   userId?: boolean
   cohortId?: boolean
   currentMonth?: boolean
+  category?: boolean
+  attendanceConfirmed?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cohort?: boolean | Prisma.ParticipantProfile$cohortArgs<ExtArgs>
@@ -610,10 +686,12 @@ export type ParticipantProfileSelectScalar = {
   userId?: boolean
   cohortId?: boolean
   currentMonth?: boolean
+  category?: boolean
+  attendanceConfirmed?: boolean
   createdAt?: boolean
 }
 
-export type ParticipantProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "cohortId" | "currentMonth" | "createdAt", ExtArgs["result"]["participantProfile"]>
+export type ParticipantProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "cohortId" | "currentMonth" | "category" | "attendanceConfirmed" | "createdAt", ExtArgs["result"]["participantProfile"]>
 export type ParticipantProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cohort?: boolean | Prisma.ParticipantProfile$cohortArgs<ExtArgs>
@@ -638,6 +716,8 @@ export type $ParticipantProfilePayload<ExtArgs extends runtime.Types.Extensions.
     userId: string
     cohortId: string | null
     currentMonth: number
+    category: $Enums.ParticipantCategory | null
+    attendanceConfirmed: boolean
     createdAt: Date
   }, ExtArgs["result"]["participantProfile"]>
   composites: {}
@@ -1068,6 +1148,8 @@ export interface ParticipantProfileFieldRefs {
   readonly userId: Prisma.FieldRef<"ParticipantProfile", 'String'>
   readonly cohortId: Prisma.FieldRef<"ParticipantProfile", 'String'>
   readonly currentMonth: Prisma.FieldRef<"ParticipantProfile", 'Int'>
+  readonly category: Prisma.FieldRef<"ParticipantProfile", 'ParticipantCategory'>
+  readonly attendanceConfirmed: Prisma.FieldRef<"ParticipantProfile", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ParticipantProfile", 'DateTime'>
 }
     

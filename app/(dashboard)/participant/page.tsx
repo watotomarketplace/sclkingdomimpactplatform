@@ -46,7 +46,53 @@ export default async function ParticipantDashboard() {
   ).length;
 
   // Build right panel widgets
+  const MONTHLY_RHYTHM: Record<number, { week: string; focus: string }[]> = {
+    1: [
+      { week: "Wk 1", focus: "Identify a real problem you've observed in your context" },
+      { week: "Wk 2", focus: "Research & validate the problem with at least 5 people" },
+      { week: "Wk 3", focus: "Define your target user and draft your problem statement" },
+      { week: "Wk 4", focus: "Complete Phase A, B & C submissions for gate review" },
+    ],
+    2: [
+      { week: "Wk 1", focus: "Define your MVP scope — least effort, most learning" },
+      { week: "Wk 2", focus: "Sketch core features and user flows" },
+      { week: "Wk 3", focus: "Build a simple prototype or mockup" },
+      { week: "Wk 4", focus: "Get feedback from 3+ potential users" },
+    ],
+    3: [
+      { week: "Wk 1", focus: "Refine prototype based on feedback received" },
+      { week: "Wk 2", focus: "Run a structured usability test with real users" },
+      { week: "Wk 3", focus: "Iterate on key pain points identified in testing" },
+      { week: "Wk 4", focus: "Prepare pilot plan and gate submission" },
+    ],
+    4: [
+      { week: "Wk 1", focus: "Launch pilot with a small group of real users" },
+      { week: "Wk 2", focus: "Monitor, track usage, and collect feedback daily" },
+      { week: "Wk 3", focus: "Identify what's working and what needs fixing" },
+      { week: "Wk 4", focus: "Document learnings and refine for launch" },
+    ],
+    5: [
+      { week: "Wk 1", focus: "Prepare launch materials and communication plan" },
+      { week: "Wk 2", focus: "Official launch — go to your target audience" },
+      { week: "Wk 3", focus: "Drive adoption and track key metrics" },
+      { week: "Wk 4", focus: "Review launch performance and submit gate" },
+    ],
+    6: [
+      { week: "Wk 1", focus: "Measure Kingdom impact — lives, livelihoods, community" },
+      { week: "Wk 2", focus: "Write your Impact Story" },
+      { week: "Wk 3", focus: "Prepare final presentation for cohort showcase" },
+      { week: "Wk 4", focus: "Celebrate, reflect and plan your next season" },
+    ],
+  };
+
   const widgets: Widget[] = [
+    {
+      id: "monthly-rhythm",
+      type: "monthly-rhythm" as const,
+      title: "Monthly Rhythm",
+      content: `Your focus for Month ${currentMonth}:`,
+      rhythm: MONTHLY_RHYTHM[currentMonth] ?? [],
+    },
     {
       id: "journal-prompt",
       type: "journal-prompt" as const,
@@ -88,19 +134,31 @@ export default async function ParticipantDashboard() {
 
   return (
     <div className="flex h-full">
-      <div className="flex-1 overflow-y-auto px-6 py-6 max-w-[780px]">
+      <div className="flex-1 overflow-y-auto px-4 py-5 md:px-6 md:py-6 max-w-[780px]">
         {/* Greeting */}
         <div className="mb-6">
           <h1 className="font-display text-[28px] font-semibold text-text-primary">
             {getGreeting(user.name)}
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
-            Month {currentMonth} · {MONTH_TITLES[currentMonth]}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap mt-1">
+            <p className="text-text-secondary text-sm">
+              Month {currentMonth} · {MONTH_TITLES[currentMonth]}
+            </p>
+            {user.participantProfile?.category && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                user.participantProfile.category === "ENTREPRENEUR"
+                  ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                  : "text-sky-700 bg-sky-50 border-sky-200"
+              }`}>
+                {user.participantProfile.category === "ENTREPRENEUR" ? "🌱" : "🏢"}
+                {user.participantProfile.category === "ENTREPRENEUR" ? "Entrepreneur" : "Intrapreneur"}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-5 md:mb-6">
           <Card padding="sm">
             <CardLabel>CURRENT PHASE</CardLabel>
             <div className="flex items-center gap-2">

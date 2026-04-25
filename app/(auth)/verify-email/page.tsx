@@ -70,7 +70,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <SplitLayout imageSrc="/images/misty-forest.jpg" imageAlt="Misty forest with light rays">
+    <SplitLayout imageSrc="/images/sunset-clouds.jpg" imageAlt="Misty forest with light rays">
       <Suspense fallback={
         <div className="text-center py-8">
           <div className="w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />

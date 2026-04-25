@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { CoachingNoteForm } from "@/components/facilitator/coaching-note-form";
 import { ScorecardAnnotationForm } from "@/components/facilitator/scorecard-annotation-form";
+import { AttendanceToggle } from "@/components/facilitator/attendance-toggle";
 import { hasAccess } from "@/lib/roles";
 import { Role } from "@/app/generated/prisma/client";
 
@@ -46,16 +47,34 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="font-display text-[26px] font-semibold text-text-primary">{participant.name}</h1>
-          <div className="flex items-center gap-3 mt-1">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h1 className="font-display text-[26px] font-semibold text-text-primary">{participant.name}</h1>
+            {participant.participantProfile?.category && (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                participant.participantProfile.category === "ENTREPRENEUR"
+                  ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                  : "text-sky-700 bg-sky-50 border-sky-200"
+              }`}>
+                {participant.participantProfile.category === "ENTREPRENEUR" ? "🌱" : "🏢"}
+                {participant.participantProfile.category === "ENTREPRENEUR" ? "Entrepreneur" : "Intrapreneur"}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 mt-0.5 flex-wrap">
             <span className="text-text-secondary text-sm">{participant.podMembership?.pod.name ?? "No pod"}</span>
             <span className="text-text-secondary">·</span>
             <span className="text-text-secondary text-sm">Month {currentMonth} — {MONTH_TITLES[currentMonth]}</span>
           </div>
         </div>
-        <Badge variant="on-track">Active</Badge>
+        <div className="flex items-center gap-2 flex-wrap">
+          <AttendanceToggle
+            participantId={participant.id}
+            initialConfirmed={participant.participantProfile?.attendanceConfirmed ?? false}
+          />
+          <Badge variant="on-track">Active</Badge>
+        </div>
       </div>
 
       {/* Tabs as anchor sections */}

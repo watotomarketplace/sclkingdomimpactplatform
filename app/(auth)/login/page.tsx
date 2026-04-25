@@ -104,7 +104,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <SplitLayout imageSrc="/images/misty-forest.jpg" imageAlt="Misty forest with light rays">
+    <SplitLayout imageSrc="/images/sunset-clouds.jpg" imageAlt="Misty forest with light rays">
       <Suspense fallback={<div className="h-96 animate-pulse bg-bg-card rounded-xl" />}>
         <LoginForm />
       </Suspense>

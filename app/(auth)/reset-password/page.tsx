@@ -73,7 +73,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <SplitLayout imageSrc="/images/misty-forest.jpg" imageAlt="Misty forest with light rays">
+    <SplitLayout imageSrc="/images/sunset-clouds.jpg" imageAlt="Misty forest with light rays">
       <Suspense fallback={<div className="h-96 animate-pulse bg-bg-card rounded-xl" />}>
         <ResetPasswordForm />
       </Suspense>

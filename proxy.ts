@@ -13,15 +13,33 @@ export default auth((req) => {
   const { nextUrl, auth: session } = req;
   const pathname = nextUrl.pathname;
 
-  // Allow public paths
+  // Allow public paths — if already logged in, bounce to their dashboard
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     if (session?.user) {
-      const dest = getDashboardPath(
-        session.user.role,
-        session.user.covenantSigned,
-        session.user.readinessComplete
-      );
+      const dest = getDashboardPath(session.user.role, session.user.covenantSigned);
       return NextResponse.redirect(new URL(dest, req.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Welcome page — shown to logged-in participants who haven't signed the covenant yet
+  if (pathname.startsWith("/welcome")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    if (session.user.covenantSigned) {
+      return NextResponse.redirect(new URL("/participant", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Problem Sightings onboarding page — after covenant, before dashboard
+  if (pathname.startsWith("/problem-sightings")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    if (!session.user.covenantSigned) {
+      return NextResponse.redirect(new URL("/welcome", req.url));
     }
     return NextResponse.next();
   }
@@ -35,27 +53,6 @@ export default auth((req) => {
       return NextResponse.redirect(new URL(getDashboardPath(session.user.role, true), req.url));
     }
     if (session.user.covenantSigned) {
-      // Covenant done — send to readiness if not complete, else dashboard
-      const dest = session.user.readinessComplete ? "/participant" : "/readiness-assessment";
-      return NextResponse.redirect(new URL(dest, req.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Readiness Assessment onboarding page
-  if (pathname.startsWith("/readiness-assessment")) {
-    if (!session?.user) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    if (session.user.role !== Role.PARTICIPANT) {
-      return NextResponse.redirect(new URL(getDashboardPath(session.user.role, true), req.url));
-    }
-    // Must have signed covenant first
-    if (!session.user.covenantSigned) {
-      return NextResponse.redirect(new URL("/covenant", req.url));
-    }
-    // If already complete, send to dashboard
-    if (session.user.readinessComplete) {
       return NextResponse.redirect(new URL("/participant", req.url));
     }
     return NextResponse.next();
@@ -65,10 +62,7 @@ export default auth((req) => {
   if (pathname === "/") {
     if (!session?.user) return NextResponse.redirect(new URL("/login", req.url));
     return NextResponse.redirect(
-      new URL(
-        getDashboardPath(session.user.role, session.user.covenantSigned, session.user.readinessComplete),
-        req.url
-      )
+      new URL(getDashboardPath(session.user.role, session.user.covenantSigned), req.url)
     );
   }
 
@@ -81,40 +75,33 @@ export default auth((req) => {
 
   const user = session.user;
 
-  // Participant must sign covenant first
-  if (user.role === Role.PARTICIPANT && !user.covenantSigned && !pathname.startsWith("/covenant")) {
-    return NextResponse.redirect(new URL("/covenant", req.url));
-  }
-
-  // Participant must complete readiness assessment before accessing the dashboard
-  if (
-    user.role === Role.PARTICIPANT &&
-    user.covenantSigned &&
-    !user.readinessComplete &&
-    !pathname.startsWith("/readiness-assessment")
-  ) {
-    return NextResponse.redirect(new URL("/readiness-assessment", req.url));
+  // Participant must visit welcome/covenant before accessing the dashboard
+  if (user.role === Role.PARTICIPANT && !user.covenantSigned) {
+    // Allow /welcome and /covenant through; everything else goes to /welcome
+    if (!pathname.startsWith("/welcome") && !pathname.startsWith("/covenant") && !pathname.startsWith("/problem-sightings")) {
+      return NextResponse.redirect(new URL("/welcome", req.url));
+    }
   }
 
   // Role-based route protection
   if (pathname.startsWith("/participant") && !hasAccess(user.role, Role.PARTICIPANT)) {
     return NextResponse.redirect(
-      new URL(getDashboardPath(user.role, user.covenantSigned, user.readinessComplete), req.url)
+      new URL(getDashboardPath(user.role, user.covenantSigned), req.url)
     );
   }
   if (pathname.startsWith("/facilitator") && !hasAccess(user.role, Role.FACILITATOR)) {
     return NextResponse.redirect(
-      new URL(getDashboardPath(user.role, user.covenantSigned, user.readinessComplete), req.url)
+      new URL(getDashboardPath(user.role, user.covenantSigned), req.url)
     );
   }
   if (pathname.startsWith("/program-admin") && !hasAccess(user.role, Role.PROGRAM_ADMIN)) {
     return NextResponse.redirect(
-      new URL(getDashboardPath(user.role, user.covenantSigned, user.readinessComplete), req.url)
+      new URL(getDashboardPath(user.role, user.covenantSigned), req.url)
     );
   }
   if (pathname.startsWith("/super-admin") && !hasAccess(user.role, Role.SUPER_ADMIN)) {
     return NextResponse.redirect(
-      new URL(getDashboardPath(user.role, user.covenantSigned, user.readinessComplete), req.url)
+      new URL(getDashboardPath(user.role, user.covenantSigned), req.url)
     );
   }
 

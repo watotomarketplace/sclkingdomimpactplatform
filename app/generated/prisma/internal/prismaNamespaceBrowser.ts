@@ -67,7 +67,9 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   VerificationToken: 'VerificationToken',
   SystemSettings: 'SystemSettings',
-  ReadinessAssessment: 'ReadinessAssessment'
+  ReadinessAssessment: 'ReadinessAssessment',
+  ProblemEntry: 'ProblemEntry',
+  CoachingSession: 'CoachingSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -99,7 +101,8 @@ export const UserScalarFieldEnum = {
   covenantSigned: 'covenantSigned',
   covenantSignedAt: 'covenantSignedAt',
   covenantData: 'covenantData',
-  readinessComplete: 'readinessComplete'
+  readinessComplete: 'readinessComplete',
+  calendlyLink: 'calendlyLink'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -110,6 +113,8 @@ export const ParticipantProfileScalarFieldEnum = {
   userId: 'userId',
   cohortId: 'cohortId',
   currentMonth: 'currentMonth',
+  category: 'category',
+  attendanceConfirmed: 'attendanceConfirmed',
   createdAt: 'createdAt'
 } as const
 
@@ -325,6 +330,34 @@ export const ReadinessAssessmentScalarFieldEnum = {
 } as const
 
 export type ReadinessAssessmentScalarFieldEnum = (typeof ReadinessAssessmentScalarFieldEnum)[keyof typeof ReadinessAssessmentScalarFieldEnum]
+
+
+export const ProblemEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  observation: 'observation',
+  sphere: 'sphere',
+  affected: 'affected',
+  observedAt: 'observedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProblemEntryScalarFieldEnum = (typeof ProblemEntryScalarFieldEnum)[keyof typeof ProblemEntryScalarFieldEnum]
+
+
+export const CoachingSessionScalarFieldEnum = {
+  id: 'id',
+  participantId: 'participantId',
+  month: 'month',
+  sessionDate: 'sessionDate',
+  notes: 'notes',
+  calendlyEventId: 'calendlyEventId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoachingSessionScalarFieldEnum = (typeof CoachingSessionScalarFieldEnum)[keyof typeof CoachingSessionScalarFieldEnum]
 
 
 export const SortOrder = {

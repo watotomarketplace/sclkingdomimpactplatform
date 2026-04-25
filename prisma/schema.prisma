@@ -39,6 +39,11 @@ enum InvitationStatus {
   EXPIRED
 }
 
+enum ParticipantCategory {
+  ENTREPRENEUR
+  INTRAPRENEUR
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -56,6 +61,10 @@ model User {
 
   readinessComplete Boolean @default(false)
 
+  calendlyLink String?
+
+  coachingSessions CoachingSession[]
+
   participantProfile    ParticipantProfile?
   podMembership         PodMember?
   submissions           Submission[]
@@ -72,18 +81,21 @@ model User {
   facilitatedPods       Pod[]           @relation("PodFacilitator")
   systemSettingsUpdates SystemSettings[] @relation("SettingsUpdatedBy")
   readinessAssessments  ReadinessAssessment[]
+  problemEntries        ProblemEntry[]
 
   @@map("users")
 }
 
 model ParticipantProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String               @id @default(cuid())
+  userId       String               @unique
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   cohortId     String?
-  cohort       Cohort?  @relation(fields: [cohortId], references: [id])
-  currentMonth Int      @default(1)
-  createdAt    DateTime @default(now())
+  cohort       Cohort?              @relation(fields: [cohortId], references: [id])
+  currentMonth Int                  @default(1)
+  category     ParticipantCategory?
+  attendanceConfirmed Boolean       @default(false)
+  createdAt    DateTime             @default(now())
 
   @@map("participant_profiles")
 }
@@ -324,4 +336,32 @@ model ReadinessAssessment {
 
   @@unique([userId, questionNumber])
   @@map("readiness_assessments")
+}
+
+model ProblemEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  observation String   // What did you observe?
+  sphere      String   // Where did you see it?
+  affected    String?  // Who is affected?
+  observedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("problem_entries")
+}
+
+model CoachingSession {
+  id            String    @id @default(cuid())
+  participantId String
+  participant   User      @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  month         Int
+  sessionDate   DateTime
+  notes         String?
+  calendlyEventId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("coaching_sessions")
 }

@@ -54,3 +54,11 @@ export const InvitationStatus = {
 } as const
 
 export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
+
+
+export const ParticipantCategory = {
+  ENTREPRENEUR: 'ENTREPRENEUR',
+  INTRAPRENEUR: 'INTRAPRENEUR'
+} as const
+
+export type ParticipantCategory = (typeof ParticipantCategory)[keyof typeof ParticipantCategory]

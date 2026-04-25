@@ -11,9 +11,8 @@ export function hasAccess(userRole: Role, requiredRole: Role): boolean {
   return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
 }
 
-export function getDashboardPath(role: Role, covenantSigned: boolean, readinessComplete = true): string {
-  if (role === Role.PARTICIPANT && !covenantSigned) return "/covenant";
-  if (role === Role.PARTICIPANT && covenantSigned && !readinessComplete) return "/readiness-assessment";
+export function getDashboardPath(role: Role, covenantSigned: boolean): string {
+  if (role === Role.PARTICIPANT && !covenantSigned) return "/welcome";
   switch (role) {
     case Role.SUPER_ADMIN:
       return "/super-admin";

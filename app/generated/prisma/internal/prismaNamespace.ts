@@ -400,7 +400,9 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   VerificationToken: 'VerificationToken',
   SystemSettings: 'SystemSettings',
-  ReadinessAssessment: 'ReadinessAssessment'
+  ReadinessAssessment: 'ReadinessAssessment',
+  ProblemEntry: 'ProblemEntry',
+  CoachingSession: 'CoachingSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "participantProfile" | "cohort" | "cohortAdmin" | "pod" | "podMember" | "submission" | "gateReview" | "scorecard" | "journalEntry" | "coachingNote" | "invitation" | "notification" | "auditLog" | "verificationToken" | "systemSettings" | "readinessAssessment"
+    modelProps: "user" | "participantProfile" | "cohort" | "cohortAdmin" | "pod" | "podMember" | "submission" | "gateReview" | "scorecard" | "journalEntry" | "coachingNote" | "invitation" | "notification" | "auditLog" | "verificationToken" | "systemSettings" | "readinessAssessment" | "problemEntry" | "coachingSession"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1678,6 +1680,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProblemEntry: {
+      payload: Prisma.$ProblemEntryPayload<ExtArgs>
+      fields: Prisma.ProblemEntryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProblemEntryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProblemEntryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        findFirst: {
+          args: Prisma.ProblemEntryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProblemEntryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        findMany: {
+          args: Prisma.ProblemEntryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>[]
+        }
+        create: {
+          args: Prisma.ProblemEntryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        createMany: {
+          args: Prisma.ProblemEntryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProblemEntryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>[]
+        }
+        delete: {
+          args: Prisma.ProblemEntryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        update: {
+          args: Prisma.ProblemEntryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProblemEntryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProblemEntryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProblemEntryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProblemEntryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProblemEntryPayload>
+        }
+        aggregate: {
+          args: Prisma.ProblemEntryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProblemEntry>
+        }
+        groupBy: {
+          args: Prisma.ProblemEntryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProblemEntryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProblemEntryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProblemEntryCountAggregateOutputType> | number
+        }
+      }
+    }
+    CoachingSession: {
+      payload: Prisma.$CoachingSessionPayload<ExtArgs>
+      fields: Prisma.CoachingSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoachingSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoachingSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.CoachingSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoachingSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        findMany: {
+          args: Prisma.CoachingSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>[]
+        }
+        create: {
+          args: Prisma.CoachingSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        createMany: {
+          args: Prisma.CoachingSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoachingSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.CoachingSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        update: {
+          args: Prisma.CoachingSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CoachingSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoachingSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoachingSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CoachingSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachingSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.CoachingSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoachingSession>
+        }
+        groupBy: {
+          args: Prisma.CoachingSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachingSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoachingSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachingSessionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1730,7 +1880,8 @@ export const UserScalarFieldEnum = {
   covenantSigned: 'covenantSigned',
   covenantSignedAt: 'covenantSignedAt',
   covenantData: 'covenantData',
-  readinessComplete: 'readinessComplete'
+  readinessComplete: 'readinessComplete',
+  calendlyLink: 'calendlyLink'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1741,6 +1892,8 @@ export const ParticipantProfileScalarFieldEnum = {
   userId: 'userId',
   cohortId: 'cohortId',
   currentMonth: 'currentMonth',
+  category: 'category',
+  attendanceConfirmed: 'attendanceConfirmed',
   createdAt: 'createdAt'
 } as const
 
@@ -1958,6 +2111,34 @@ export const ReadinessAssessmentScalarFieldEnum = {
 export type ReadinessAssessmentScalarFieldEnum = (typeof ReadinessAssessmentScalarFieldEnum)[keyof typeof ReadinessAssessmentScalarFieldEnum]
 
 
+export const ProblemEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  observation: 'observation',
+  sphere: 'sphere',
+  affected: 'affected',
+  observedAt: 'observedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProblemEntryScalarFieldEnum = (typeof ProblemEntryScalarFieldEnum)[keyof typeof ProblemEntryScalarFieldEnum]
+
+
+export const CoachingSessionScalarFieldEnum = {
+  id: 'id',
+  participantId: 'participantId',
+  month: 'month',
+  sessionDate: 'sessionDate',
+  notes: 'notes',
+  calendlyEventId: 'calendlyEventId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoachingSessionScalarFieldEnum = (typeof CoachingSessionScalarFieldEnum)[keyof typeof CoachingSessionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2086,6 +2267,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ParticipantCategory'
+ */
+export type EnumParticipantCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParticipantCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'ParticipantCategory[]'
+ */
+export type ListEnumParticipantCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParticipantCategory[]'>
     
 
 
@@ -2270,6 +2465,8 @@ export type GlobalOmitConfig = {
   verificationToken?: Prisma.VerificationTokenOmit
   systemSettings?: Prisma.SystemSettingsOmit
   readinessAssessment?: Prisma.ReadinessAssessmentOmit
+  problemEntry?: Prisma.ProblemEntryOmit
+  coachingSession?: Prisma.CoachingSessionOmit
 }
 
 /* Types for Logging */

@@ -7,6 +7,7 @@ const schema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8).max(64),
+  category: z.enum(["ENTREPRENEUR", "INTRAPRENEUR"]).optional(),
 });
 
 export async function POST(req: Request) {
@@ -30,7 +31,11 @@ export async function POST(req: Request) {
         passwordHash,
         role: "PARTICIPANT",
         emailVerified: new Date(), // mark verified right away
-        participantProfile: { create: {} },
+        participantProfile: {
+          create: {
+            ...(data.category ? { category: data.category } : {}),
+          },
+        },
       },
     });
 

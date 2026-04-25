@@ -126,3 +126,13 @@ export type SystemSettings = Prisma.SystemSettingsModel
  * 
  */
 export type ReadinessAssessment = Prisma.ReadinessAssessmentModel
+/**
+ * Model ProblemEntry
+ * 
+ */
+export type ProblemEntry = Prisma.ProblemEntryModel
+/**
+ * Model CoachingSession
+ * 
+ */
+export type CoachingSession = Prisma.CoachingSessionModel
