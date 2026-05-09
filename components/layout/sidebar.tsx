@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, BookOpen, Target, BookMarked, Users,
-  ClipboardCheck, MessageSquare, AlertTriangle, BarChart3,
-  UserCheck, Building2, Shield, Settings, ScrollText,
-  ChevronRight, Lock, CheckCircle2, FileText, PlusCircle,
-  Layers, CalendarDays, ClipboardList, Video
+  AlertTriangle, BarChart3, UserCheck, Settings, ScrollText,
+  Lock, FileText, ClipboardList, Compass, Eye, Search,
+  Lightbulb, Hammer, Sparkles, MessageSquare, CalendarDays,
+  Upload, Download, Bell, Database, ListChecks, FileCheck,
+  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Role } from "@/app/generated/prisma/enums";
+import { Role, MilestoneType } from "@/app/generated/prisma/enums";
 
 interface NavItem {
   label: string;
@@ -25,27 +26,51 @@ interface NavGroup {
   items: NavItem[];
 }
 
-function getParticipantNav(currentMonth: number, unlockedMonths: number[]): NavGroup[] {
-  const months = [
-    { num: 1, label: "Pain Point to Concept" },
-    { num: 2, label: "MVP Design" },
-    { num: 3, label: "Prototype & Test" },
-    { num: 4, label: "Pilot" },
-    { num: 5, label: "Launch" },
-    { num: 6, label: "Impact Review" },
+/* ──────────────────────────────────────────────────────────────────── */
+/* Addendum 3 — Navigation per Section 10                                */
+/* ──────────────────────────────────────────────────────────────────── */
+
+function getParticipantNav(unlockedMilestones: MilestoneType[]): NavGroup[] {
+  const milestoneIcons: Record<string, React.ElementType> = {
+    ONBOARDING: Compass,
+    MILESTONE_1: Search,         // UNDERSTAND
+    MILESTONE_2: Hammer,         // BUILD
+    MILESTONE_3: Hammer,         // BUILD continues
+    MILESTONE_4: Sparkles,       // LAUNCH & MEASURE
+  };
+  const milestoneLabels: Record<string, string> = {
+    ONBOARDING: "Onboarding",
+    MILESTONE_1: "Milestone 1 — Validation",
+    MILESTONE_2: "Milestone 2 — Build & Test",
+    MILESTONE_3: "Milestone 3 — Implementation",
+    MILESTONE_4: "Milestone 4 — Final",
+  };
+  const milestoneOrder: MilestoneType[] = [
+    MilestoneType.ONBOARDING,
+    MilestoneType.MILESTONE_1,
+    MilestoneType.MILESTONE_2,
+    MilestoneType.MILESTONE_3,
+    MilestoneType.MILESTONE_4,
   ];
+  const slugFor: Record<string, string> = {
+    ONBOARDING: "onboarding",
+    MILESTONE_1: "milestone-1",
+    MILESTONE_2: "milestone-2",
+    MILESTONE_3: "milestone-3",
+    MILESTONE_4: "milestone-4",
+  };
 
   return [
     {
       label: "MY JOURNEY",
       items: [
         { label: "Dashboard", href: "/participant", icon: LayoutDashboard },
-        { label: "Problem Sightings", href: "/participant/problem-log", icon: ClipboardList },
-        ...months.map((m) => ({
-          label: `Month ${m.num} — ${m.label}`,
-          href: `/participant/journey/month-${m.num}`,
-          icon: m.num <= (currentMonth) ? BookOpen : Lock,
-          locked: !unlockedMonths.includes(m.num),
+        { label: "Problem Log", href: "/participant/problem-log", icon: ClipboardList },
+        ...milestoneOrder.map((m) => ({
+          label: milestoneLabels[m],
+          href: `/participant/journey/${slugFor[m]}`,
+          icon: unlockedMilestones.includes(m) ? milestoneIcons[m] : Lock,
+          locked: !unlockedMilestones.includes(m),
         })),
       ],
     },
@@ -54,95 +79,89 @@ function getParticipantNav(currentMonth: number, unlockedMonths: number[]): NavG
       items: [
         { label: "My Scorecard", href: "/participant/scorecard", icon: Target },
         { label: "Kingdom Journal", href: "/participant/journal", icon: BookMarked },
-        { label: "Group Accountability", href: "/participant/pod", icon: Users },
-        { label: "Coaching Sessions", href: "/participant/coaching", icon: Video },
-        { label: "Readiness Assessment", href: "/participant/readiness-assessment", icon: CheckCircle2 },
+      ],
+    },
+    {
+      label: "COACHING",
+      items: [
+        { label: "Book a session", href: "/participant/coaching/book", icon: CalendarDays },
+        { label: "My sessions", href: "/participant/coaching", icon: Video },
       ],
     },
   ];
 }
 
-function getFacilitatorNav(pendingGates: number, redFlags: number): NavGroup[] {
+function getGroupLeaderNav(unlockedMilestones: MilestoneType[]): NavGroup[] {
+  // Group Leaders see participant nav + their own group section
   return [
+    ...getParticipantNav(unlockedMilestones),
     {
-      label: "GROUP ACCOUNTABILITY",
+      label: "MY GROUP",
       items: [
-        { label: "Group Overview", href: "/facilitator", icon: LayoutDashboard },
-        { label: "Gate Reviews", href: "/facilitator/gate-reviews", icon: ClipboardCheck, badge: pendingGates },
-        { label: "Coaching Notes", href: "/facilitator/coaching-notes", icon: MessageSquare },
-      ],
-    },
-    {
-      label: "PROGRAM",
-      items: [
-        { label: "Cohort Progress", href: "/facilitator/cohort-progress", icon: BarChart3 },
-        { label: "Scorecards", href: "/facilitator/scorecards", icon: Target },
-        { label: "Red Flags", href: "/facilitator/red-flags", icon: AlertTriangle, badge: redFlags },
+        { label: "Group Status", href: "/group-leader", icon: Users },
+        { label: "Submit Meeting Summary", href: "/group-leader/meeting-summary", icon: FileText },
       ],
     },
   ];
 }
 
-function getProgramAdminNav(pendingGates: number, redFlags: number): NavGroup[] {
+function getFacilitatorNav(pendingReviews: number, atRiskCount: number): NavGroup[] {
   return [
     {
-      label: "GROUP ACCOUNTABILITY",
+      label: "COHORT",
       items: [
-        { label: "Group Overview", href: "/program-admin/pods-overview", icon: LayoutDashboard },
-        { label: "Gate Reviews", href: "/program-admin/gate-reviews", icon: ClipboardCheck, badge: pendingGates },
-        { label: "Coaching Notes", href: "/program-admin/coaching-notes", icon: MessageSquare },
-        { label: "Cohort Progress", href: "/program-admin/cohort-progress", icon: BarChart3 },
-        { label: "Scorecards", href: "/program-admin/scorecards", icon: Target },
-        { label: "Red Flags", href: "/program-admin/red-flags", icon: AlertTriangle, badge: redFlags },
+        { label: "Overview", href: "/facilitator", icon: LayoutDashboard },
+        { label: "Participant List", href: "/facilitator/participants", icon: Users },
+        { label: "Late & At Risk", href: "/facilitator/red-flags", icon: AlertTriangle, badge: atRiskCount },
+        { label: "Group Summaries", href: "/facilitator/group-summaries", icon: ListChecks },
       ],
     },
     {
-      label: "PROGRAM MANAGEMENT",
+      label: "COACHING",
       items: [
-        { label: "Cohort Dashboard", href: "/program-admin", icon: Layers },
-        { label: "Participants", href: "/program-admin/participants", icon: Users },
-        { label: "Facilitators", href: "/program-admin/facilitators", icon: UserCheck },
-        { label: "Groups", href: "/program-admin/pods", icon: Building2 },
-        { label: "Cohorts", href: "/program-admin/cohorts", icon: CalendarDays },
+        { label: "Upcoming sessions", href: "/facilitator/coaching/upcoming", icon: CalendarDays },
+        { label: "Session log", href: "/facilitator/coaching-notes", icon: MessageSquare },
       ],
     },
     {
-      label: "ACCOUNTS",
+      label: "MILESTONE REVIEWS",
       items: [
-        { label: "Create Facilitator", href: "/program-admin/facilitators/new", icon: PlusCircle },
-        { label: "Manage Users", href: "/program-admin/users", icon: Settings },
-      ],
-    },
-    {
-      label: "REPORTS",
-      items: [
-        { label: "Progress Report", href: "/program-admin/reports/progress", icon: BarChart3 },
-        { label: "Gate Summary", href: "/program-admin/reports/gates", icon: FileText },
+        { label: "Onboarding Reviews", href: "/facilitator/reviews/onboarding", icon: FileCheck, badge: pendingReviews },
+        { label: "Milestone 1 Reviews", href: "/facilitator/reviews/milestone-1", icon: Search },
+        { label: "Milestone 2 Reviews", href: "/facilitator/reviews/milestone-2", icon: Hammer },
+        { label: "Milestone 3 Reviews", href: "/facilitator/reviews/milestone-3", icon: Hammer },
+        { label: "Milestone 4 Reviews", href: "/facilitator/reviews/milestone-4", icon: Sparkles },
       ],
     },
   ];
 }
 
-function getSuperAdminNav(pendingGates: number, redFlags: number): NavGroup[] {
+function getSuperAdminNav(pendingReviews: number, atRiskCount: number): NavGroup[] {
   return [
-    ...getProgramAdminNav(pendingGates, redFlags),
+    ...getFacilitatorNav(pendingReviews, atRiskCount),
     {
-      label: "PLATFORM",
+      label: "ADMIN",
       items: [
-        { label: "Overview", href: "/super-admin", icon: Shield },
-        { label: "Program Admins", href: "/super-admin/program-admins", icon: UserCheck },
-        { label: "All Users", href: "/super-admin/all-users", icon: Users },
+        { label: "User Management", href: "/super-admin/all-users", icon: Users },
+        { label: "Import Participants", href: "/super-admin/import", icon: Upload },
+        { label: "Group Assignment", href: "/super-admin/groups", icon: UserCheck },
         { label: "System Settings", href: "/super-admin/settings", icon: Settings },
+        { label: "Notifications Log", href: "/super-admin/notifications", icon: Bell },
+        { label: "Data Export", href: "/super-admin/export", icon: Download },
+        { label: "Presentation Schedule", href: "/super-admin/schedule", icon: CalendarDays },
         { label: "Audit Log", href: "/super-admin/audit-log", icon: ScrollText },
       ],
     },
   ];
 }
 
+/* ──────────────────────────────────────────────────────────────────── */
+
 interface SidebarProps {
   role: Role;
-  currentMonth?: number;
-  unlockedMonths?: number[];
+  currentMonth?: number;          // legacy prop
+  unlockedMonths?: number[];      // legacy prop (months 1-6)
+  unlockedMilestones?: MilestoneType[];  // Addendum 3
   pendingGates?: number;
   redFlags?: number;
   mobileOpen?: boolean;
@@ -151,8 +170,7 @@ interface SidebarProps {
 
 export function Sidebar({
   role,
-  currentMonth = 1,
-  unlockedMonths = [1],
+  unlockedMilestones,
   pendingGates = 0,
   redFlags = 0,
   mobileOpen = false,
@@ -160,14 +178,21 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
 
+  // Default: only ONBOARDING is unlocked for new participants
+  const milestonesUnlocked: MilestoneType[] =
+    unlockedMilestones && unlockedMilestones.length > 0
+      ? unlockedMilestones
+      : [MilestoneType.ONBOARDING];
+
   const navGroups = (() => {
     switch (role) {
       case Role.PARTICIPANT:
-        return getParticipantNav(currentMonth, unlockedMonths);
+        return getParticipantNav(milestonesUnlocked);
+      case Role.GROUP_LEADER:
+        return getGroupLeaderNav(milestonesUnlocked);
       case Role.FACILITATOR:
         return getFacilitatorNav(pendingGates, redFlags);
       case Role.PROGRAM_ADMIN:
-        return getProgramAdminNav(pendingGates, redFlags);
       case Role.SUPER_ADMIN:
         return getSuperAdminNav(pendingGates, redFlags);
       default:
@@ -178,51 +203,60 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        // Base styles
-        "bg-[#0A0A0A] flex flex-col pt-5 pb-4 overflow-y-auto z-30",
+        // Glass tier 1 — Addendum 3
+        "bg-bg-sidebar flex flex-col pt-5 pb-4 overflow-y-auto z-30 border-r border-[rgba(255,255,255,0.08)]",
         // Desktop: in normal flex flow
         "md:relative md:w-[196px] md:shrink-0 md:h-full md:translate-x-0 md:transition-none",
-        // Mobile: fixed drawer sliding from left, top-14 = below topbar (h-14)
+        // Mobile: fixed drawer sliding from left
         "fixed top-14 left-0 bottom-0 w-[240px] transition-transform duration-300 ease-in-out",
         mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       )}
     >
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-4 mb-6">
-        <div className="w-7 h-7 bg-white rounded-md flex items-center justify-center">
-          <span className="text-[#0A0A0A] text-xs font-bold font-display">S</span>
+        <div className="w-7 h-7 bg-gradient-to-br from-[#C8973A] to-[#A87B2A] rounded-md flex items-center justify-center shadow-lg shadow-[#C8973A]/30">
+          <span className="text-white text-xs font-bold font-display">S</span>
         </div>
-        <span className="text-[13px] font-semibold text-white/90">SCL Platform</span>
+        <span className="text-[13px] font-semibold text-white">SCL Platform</span>
       </div>
 
       {navGroups.map((group) => (
         <div key={group.label} className="mb-5">
-          <p className="px-4 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/30">
+          <p className="px-4 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.10em] text-white/35">
             {group.label}
           </p>
           {group.items.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/") && item.href !== "/participant" && item.href !== "/facilitator" && item.href !== "/program-admin" && item.href !== "/super-admin");
-            const isExactActive = pathname === item.href;
-            const active = isActive || isExactActive;
+            const isExact = pathname === item.href;
+            const isActive =
+              isExact ||
+              (item.href !== "/" &&
+                pathname.startsWith(item.href + "/") &&
+                ![
+                  "/participant",
+                  "/group-leader",
+                  "/facilitator",
+                  "/program-admin",
+                  "/super-admin",
+                ].includes(item.href));
 
             return (
               <Link
                 key={item.href}
                 href={item.locked ? "#" : item.href}
                 className={cn(
-                  "flex items-center gap-2.5 px-4 h-9 text-[13px] transition-colors relative mx-2 rounded-md",
-                  active
-                    ? "bg-white/10 text-white font-medium"
-                    : "text-white/55 hover:text-white/90 hover:bg-white/[0.04]",
-                  item.locked && "cursor-not-allowed opacity-30 pointer-events-none",
+                  "flex items-center gap-2.5 px-3 h-9 text-[13px] transition-all relative mx-2 rounded-lg",
+                  isActive
+                    ? "bg-[rgba(200,151,58,0.15)] text-white font-medium border-l-2 border-[#C8973A]"
+                    : "text-white/65 hover:text-white hover:bg-white/[0.06]",
+                  item.locked && "cursor-not-allowed opacity-30 pointer-events-none"
                 )}
                 onClick={item.locked ? (e) => e.preventDefault() : () => onClose?.()}
               >
                 <Icon size={14} className="shrink-0" />
                 <span className="truncate flex-1">{item.label}</span>
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="bg-accent-danger text-white text-[10px] font-semibold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none">
+                  <span className="bg-[rgba(220,38,38,0.85)] text-white text-[10px] font-semibold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none">
                     {item.badge}
                   </span>
                 )}

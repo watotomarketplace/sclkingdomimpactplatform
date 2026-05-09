@@ -91,7 +91,7 @@ export function OnboardingChecklist({ currentMonth, submissions }: OnboardingChe
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 bg-accent-primary text-white text-xs font-medium px-3 py-2 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+        className="fixed bottom-6 right-6 bg-accent-primary text-text-primary text-xs font-medium px-3 py-2 rounded-full shadow-lg hover:opacity-90 transition-opacity"
       >
         Getting started ({completedCount}/{CHECKLIST.length})
       </button>
@@ -123,7 +123,7 @@ export function OnboardingChecklist({ currentMonth, submissions }: OnboardingChe
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0",
                   done ? "border-accent-primary bg-accent-primary" : "border-border"
                 )}>
-                  {done && <Check size={11} className="text-white" />}
+                  {done && <Check size={11} className="text-text-primary" />}
                 </div>
                 <span className={cn("text-sm flex-1", done ? "text-text-secondary line-through" : "text-text-primary font-medium")}>
                   {item.label}

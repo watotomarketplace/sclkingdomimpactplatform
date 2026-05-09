@@ -9,9 +9,48 @@ datasource db {
 
 enum Role {
   SUPER_ADMIN
-  PROGRAM_ADMIN
+  PROGRAM_ADMIN  // retained for back-compat; treated as SUPER_ADMIN by roles.ts
   FACILITATOR
+  GROUP_LEADER   // Addendum 3: new role between Participant and Facilitator
   PARTICIPANT
+}
+
+enum MilestoneType {
+  ONBOARDING
+  MILESTONE_1
+  MILESTONE_2
+  MILESTONE_3
+  MILESTONE_4
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  LATE
+  AT_RISK
+}
+
+enum MeetingFormat {
+  IN_PERSON
+  ONLINE
+  HYBRID
+}
+
+enum InitiativeType {
+  NEW_BUSINESS       // "I am starting a new business or organisation"
+  WORKPLACE_SOLUTION // "I am building a solution within my current workplace"
+}
+
+enum SphereOfInfluence {
+  BUSINESS
+  EDUCATION
+  GOVERNMENT
+  CHURCH
+  MEDIA
+  HEALTH
+  ARTS
+  FAMILY
 }
 
 enum GateDecision {
@@ -63,7 +102,23 @@ model User {
 
   calendlyLink String?
 
-  coachingSessions CoachingSession[]
+  // Addendum 3: profile fields (Watoto pre-created accounts)
+  phone             String?
+  campus            String?
+  sphereOfInfluence SphereOfInfluence?
+
+  // Addendum 3: onboarding state replaces covenant flow
+  onboardingComplete   Boolean   @default(false)
+  onboardingCompletedAt DateTime?
+  mviBriefData         Json?     // 12-field MVI Brief stored here on first login
+
+  // Addendum 3: initiative type captured at Milestone 1 (not signup)
+  initiativeType InitiativeType?
+
+  coachingSessions             CoachingSession[]
+  milestoneSubmissions         MilestoneSubmission[]
+  reviewedMilestones           MilestoneSubmission[] @relation("MilestoneReviewer")
+  authoredMeetingSummaries     GroupMeetingSummary[]
 
   participantProfile    ParticipantProfile?
   podMembership         PodMember?
@@ -135,7 +190,8 @@ model Pod {
   facilitator   User?    @relation("PodFacilitator", fields: [facilitatorId], references: [id])
   createdAt     DateTime @default(now())
 
-  members PodMember[]
+  members          PodMember[]
+  meetingSummaries GroupMeetingSummary[]
 
   @@map("pods")
 }
@@ -146,6 +202,9 @@ model PodMember {
   user     User     @relation(fields: [userId], references: [id])
   pod      Pod      @relation(fields: [podId], references: [id])
   joinedAt DateTime @default(now())
+
+  // Addendum 3: Group Leader flag, set by admin after Day 3
+  isLeader Boolean  @default(false)
 
   @@id([userId, podId])
   @@map("pod_members")
@@ -364,4 +423,45 @@ model CoachingSession {
   updatedAt     DateTime  @updatedAt
 
   @@map("coaching_sessions")
+}
+
+// Addendum 3: New milestone-based submission model (replaces month/phase Submission for new flow)
+model MilestoneSubmission {
+  id            String          @id @default(cuid())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestoneType MilestoneType
+  status        MilestoneStatus @default(IN_PROGRESS)
+  formData      Json            @default("{}")
+  fileUrls      Json?           // array of uploaded file references
+  submittedAt   DateTime?
+  deadline      DateTime?
+  // Facilitator review
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewedBy    User?           @relation("MilestoneReviewer", fields: [reviewedById], references: [id])
+  reviewNotes   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([userId, milestoneType])
+  @@map("milestone_submissions")
+}
+
+// Addendum 3: Group Leader monthly meeting summary
+model GroupMeetingSummary {
+  id          String        @id @default(cuid())
+  podId       String
+  pod         Pod           @relation(fields: [podId], references: [id], onDelete: Cascade)
+  authorId    String        // group leader who submitted
+  author      User          @relation(fields: [authorId], references: [id])
+  meetingDate DateTime
+  format      MeetingFormat
+  attendeeIds Json          // array of user IDs who attended
+  summary     String
+  concerns    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("group_meeting_summaries")
 }

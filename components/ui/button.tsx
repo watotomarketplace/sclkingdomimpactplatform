@@ -12,12 +12,21 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
+/**
+ * Addendum 3 — Glass-aware buttons.
+ * Primary uses accent-primary. Secondary is glass-tier-2. Gold is the highlight CTA.
+ */
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-[#0A0A0A] text-white hover:bg-[#262626] disabled:opacity-40",
-  secondary: "bg-white border border-border text-text-primary hover:bg-bg-base disabled:opacity-40",
-  ghost: "bg-transparent text-text-secondary hover:text-text-primary hover:bg-bg-base disabled:opacity-40",
-  destructive: "bg-accent-danger text-white hover:opacity-90 disabled:opacity-40",
-  gold: "bg-accent-gold text-white hover:opacity-90 disabled:opacity-40",
+  primary:
+    "btn-primary-glass disabled:opacity-50 disabled:cursor-not-allowed",
+  secondary:
+    "btn-glass-secondary disabled:opacity-50 disabled:cursor-not-allowed",
+  ghost:
+    "bg-transparent text-text-on-glass-secondary hover:text-text-on-glass hover:bg-white/[0.06] border border-transparent disabled:opacity-50 disabled:cursor-not-allowed rounded-xl",
+  destructive:
+    "bg-[rgba(220,38,38,0.85)] text-white border border-[rgba(220,38,38,0.95)] hover:brightness-110 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed rounded-xl",
+  gold:
+    "btn-gold disabled:opacity-50 disabled:cursor-not-allowed",
 };
 
 const sizeStyles: Record<Size, string> = {
@@ -33,7 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors cursor-pointer",
+          "btn-base inline-flex items-center justify-center gap-2 font-medium",
           variantStyles[variant],
           sizeStyles[size],
           className

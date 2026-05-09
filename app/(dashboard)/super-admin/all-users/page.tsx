@@ -23,7 +23,7 @@ export default async function AllUsersPage() {
     },
   });
 
-  const roleOrder: Role[] = [Role.SUPER_ADMIN, Role.PROGRAM_ADMIN, Role.FACILITATOR, Role.PARTICIPANT];
+  const roleOrder: Role[] = [Role.SUPER_ADMIN, Role.PROGRAM_ADMIN, Role.FACILITATOR, Role.GROUP_LEADER, Role.PARTICIPANT];
   const grouped = roleOrder.map((role) => ({
     role,
     label: ROLE_LABELS[role],

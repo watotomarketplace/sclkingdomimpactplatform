@@ -143,8 +143,8 @@ function StatusDefinitionsCallout() {
           <div key={opt.value} className="flex items-start gap-2.5">
             <span className={cn("w-2 h-2 rounded-full mt-1 shrink-0", opt.dot)} />
             <div>
-              <p className="text-[12px] font-semibold text-white leading-none mb-1">{opt.label}</p>
-              <p className="text-[11px] text-white/50 leading-relaxed">
+              <p className="text-[12px] font-semibold text-text-primary leading-none mb-1">{opt.label}</p>
+              <p className="text-[11px] text-text-secondary leading-relaxed">
                 {opt.value === "ON_TRACK" && "You're progressing well — keep going."}
                 {opt.value === "NEEDS_ATTENTION" && "Something needs focus this week — be honest."}
                 {opt.value === "ESCALATE" &&

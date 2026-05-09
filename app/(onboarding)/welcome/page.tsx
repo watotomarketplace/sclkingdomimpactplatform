@@ -120,10 +120,10 @@ export default function WelcomePage() {
 
         {/* Logo top-left */}
         <div className="flex items-center gap-2.5 px-6 pt-8 md:px-12 md:pt-10">
-          <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center border border-white/30">
-            <span className="text-white text-xs font-bold font-display">S</span>
+          <div className="w-7 h-7 bg-bg-base rounded-lg flex items-center justify-center border border-border">
+            <span className="text-text-primary text-xs font-bold font-display">S</span>
           </div>
-          <span className="text-white/80 text-[13px] font-semibold tracking-tight">SCL Platform</span>
+          <span className="text-text-primary text-[13px] font-semibold tracking-tight">SCL Platform</span>
         </div>
 
         {/* Main text — sits above bottom controls */}
@@ -134,18 +134,18 @@ export default function WelcomePage() {
           )}
         >
           {/* Tag */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-5 w-fit">
+          <div className="inline-flex items-center gap-2 bg-bg-base border border-border rounded-full px-3 py-1 mb-5 w-fit">
             <span className="text-accent-gold text-[10px]">✦</span>
-            <span className="text-white/70 text-[10px] font-semibold uppercase tracking-widest">{current.tag}</span>
+            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-widest">{current.tag}</span>
           </div>
 
           {/* Headline — newlines render as line breaks */}
-          <h1 className="font-display text-[36px] md:text-[52px] font-semibold text-white leading-[1.1] mb-4 whitespace-pre-line">
+          <h1 className="font-display text-[36px] md:text-[52px] font-semibold text-text-primary leading-[1.1] mb-4 whitespace-pre-line">
             {current.headline(firstName)}
           </h1>
 
           {/* Body */}
-          <p className="text-white/65 text-[15px] md:text-[16px] leading-relaxed mb-6 max-w-lg">
+          <p className="text-text-secondary text-[15px] md:text-[16px] leading-relaxed mb-6 max-w-lg">
             {current.body}
           </p>
 
@@ -154,8 +154,8 @@ export default function WelcomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 mb-6">
               {current.detail.map((item) => (
                 <div key={item.label} className="flex items-baseline gap-2.5">
-                  <span className="text-[11px] font-mono text-white/40 w-14 shrink-0">{item.label}</span>
-                  <span className="text-[13px] text-white/80">{item.value}</span>
+                  <span className="text-[11px] font-mono text-[#A3A3A3] w-14 shrink-0">{item.label}</span>
+                  <span className="text-[13px] text-text-primary">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -164,7 +164,7 @@ export default function WelcomePage() {
           {/* Quote (last slide) */}
           {"quote" in current && current.quote && (
             <div className="border-l-2 border-accent-gold pl-4 mb-6">
-              <p className="font-display text-[17px] text-white/90 italic leading-snug whitespace-pre-line">
+              <p className="font-display text-[17px] text-text-primary italic leading-snug whitespace-pre-line">
                 &ldquo;{current.quote}&rdquo;
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function WelcomePage() {
           <button
             onClick={() => goTo(slide - 1)}
             className={cn(
-              "flex items-center gap-1.5 text-white/50 hover:text-white/80 transition-colors text-[13px] font-medium min-w-[80px]",
+              "flex items-center gap-1.5 text-text-secondary hover:text-text-primary transition-colors text-[13px] font-medium min-w-[80px]",
               slide === 0 && "invisible"
             )}
           >
@@ -196,7 +196,7 @@ export default function WelcomePage() {
                   "rounded-full transition-all duration-300",
                   i === slide
                     ? "w-6 h-2 bg-white"
-                    : "w-2 h-2 bg-white/30 hover:bg-white/50"
+                    : "w-2 h-2 bg-bg-base hover:bg-bg-base"
                 )}
               />
             ))}
@@ -208,8 +208,8 @@ export default function WelcomePage() {
             className={cn(
               "flex items-center gap-1.5 font-medium text-[14px] px-5 py-2.5 rounded-lg transition-all min-w-[140px] justify-center",
               isLast
-                ? "bg-white text-[#0A0A0A] hover:bg-white/90"
-                : "text-white bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20"
+                ? "bg-white text-[#0A0A0A] hover:bg-bg-base"
+                : "text-text-primary bg-bg-base hover:bg-bg-base border border-border"
             )}
           >
             {current.cta}
@@ -220,7 +220,7 @@ export default function WelcomePage() {
         {/* Swipe hint on mobile — only slide 0 */}
         {slide === 0 && (
           <div className="absolute bottom-24 left-0 right-0 flex justify-center md:hidden pointer-events-none">
-            <p className="text-white/30 text-[11px] tracking-wider uppercase">Tap next to continue</p>
+            <p className="text-[#A3A3A3] text-[11px] tracking-wider uppercase">Tap next to continue</p>
           </div>
         )}
       </div>

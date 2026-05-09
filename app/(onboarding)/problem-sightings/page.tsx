@@ -106,14 +106,14 @@ export default function ProblemSightingsOnboarding() {
         <img src="/images/tahoe-beach.jpg" alt="Clear lake" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10 md:bg-gradient-to-r md:from-black/10 md:via-black/30 md:to-black/70" />
         <div className="absolute bottom-6 left-6 right-6 md:bottom-12 md:left-10 md:right-10 z-10">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-3">
+          <div className="inline-flex items-center gap-2 bg-bg-base border border-border rounded-full px-3 py-1 mb-3">
             <span className="text-accent-gold text-[10px]">✦</span>
-            <span className="text-white/70 text-[10px] font-semibold uppercase tracking-widest">Before Month 1</span>
+            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-widest">Before Month 1</span>
           </div>
-          <h2 className="font-display text-[22px] md:text-[28px] text-white leading-snug">
+          <h2 className="font-display text-[22px] md:text-[28px] text-text-primary leading-snug">
             What problems<br className="hidden md:block" /> do you see?
           </h2>
-          <p className="text-white/55 text-[13px] mt-2 leading-relaxed hidden md:block max-w-xs">
+          <p className="text-text-secondary text-[13px] mt-2 leading-relaxed hidden md:block max-w-xs">
             Don&rsquo;t filter. Just observe and record. You&rsquo;ll refine these in Month 1.
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function ProblemSightingsOnboarding() {
           <div className="mb-6">
             <div className="flex items-center gap-2.5 mb-6">
               <div className="w-7 h-7 bg-[#0A0A0A] rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs font-bold font-display">S</span>
+                <span className="text-text-primary text-xs font-bold font-display">S</span>
               </div>
               <span className="text-[13px] font-semibold text-text-primary">SCL Platform</span>
             </div>
@@ -220,7 +220,7 @@ export default function ProblemSightingsOnboarding() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium bg-[#0A0A0A] text-white rounded-lg hover:bg-[#1a1a1a] disabled:opacity-50 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium bg-[#0A0A0A] text-text-primary rounded-lg hover:bg-[#1a1a1a] disabled:opacity-50 transition-colors"
                   >
                     {saving ? "Saving…" : "Log problem"}
                   </button>
@@ -311,7 +311,7 @@ export default function ProblemSightingsOnboarding() {
               className={cn(
                 "flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-[14px] transition-all shrink-0",
                 entries.length > 0
-                  ? "bg-[#0A0A0A] text-white hover:bg-[#1a1a1a]"
+                  ? "bg-[#0A0A0A] text-text-primary hover:bg-[#1a1a1a]"
                   : "bg-bg-base text-text-primary border border-border hover:border-border-strong hover:bg-white"
               )}
             >

@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 
-type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "PARTICIPANT";
+type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "GROUP_LEADER" | "PARTICIPANT";
 
 const ROLE_OPTIONS: { value: Role; label: string }[] = [
   { value: "SUPER_ADMIN", label: "Super Admin" },
   { value: "PROGRAM_ADMIN", label: "Program Admin" },
   { value: "FACILITATOR", label: "Facilitator" },
+  { value: "GROUP_LEADER", label: "Group Leader" },
   { value: "PARTICIPANT", label: "Participant" },
 ];
 

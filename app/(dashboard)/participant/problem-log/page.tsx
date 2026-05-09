@@ -144,7 +144,7 @@ export default function ProblemLogPage() {
         {!showForm && (
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 bg-[#0A0A0A] hover:bg-[#1a1a1a] text-white text-[13px] font-medium px-4 py-2.5 rounded-lg transition-colors shrink-0 ml-4"
+            className="flex items-center gap-2 bg-[#0A0A0A] hover:bg-[#1a1a1a] text-text-primary text-[13px] font-medium px-4 py-2.5 rounded-lg transition-colors shrink-0 ml-4"
           >
             <Plus size={14} />
             Log a problem
@@ -167,7 +167,7 @@ export default function ProblemLogPage() {
           </p>
           <button
             onClick={openAdd}
-            className="mt-6 flex items-center gap-2 bg-[#0A0A0A] hover:bg-[#1a1a1a] text-white text-[13px] font-medium px-4 py-2.5 rounded-lg transition-colors"
+            className="mt-6 flex items-center gap-2 bg-[#0A0A0A] hover:bg-[#1a1a1a] text-text-primary text-[13px] font-medium px-4 py-2.5 rounded-lg transition-colors"
           >
             <Plus size={14} />
             Log your first problem

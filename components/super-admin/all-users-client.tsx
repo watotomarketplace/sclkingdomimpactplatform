@@ -9,7 +9,7 @@ import { DeleteUserButton } from "@/components/super-admin/delete-user-button";
 import { UserFormModal } from "@/components/super-admin/user-form-modal";
 import { Plus, Pencil } from "lucide-react";
 
-type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "PARTICIPANT";
+type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "GROUP_LEADER" | "PARTICIPANT";
 
 interface UserRow {
   id: string;

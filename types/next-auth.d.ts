@@ -6,8 +6,9 @@ declare module "next-auth" {
     user: {
       id: string;
       role: Role;
-      covenantSigned: boolean;
-      readinessComplete: boolean;
+      covenantSigned: boolean;       // legacy, kept for back-compat
+      readinessComplete: boolean;    // legacy, kept for back-compat
+      onboardingComplete: boolean;   // Addendum 3: MVI Brief completed
     } & DefaultSession["user"];
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     role: Role;
     covenantSigned: boolean;
     readinessComplete: boolean;
+    onboardingComplete: boolean;
   }
 }
 
@@ -24,5 +26,6 @@ declare module "next-auth/jwt" {
     role: Role;
     covenantSigned: boolean;
     readinessComplete: boolean;
+    onboardingComplete: boolean;
   }
 }

@@ -394,7 +394,7 @@ export default function ReadinessAssessmentPage() {
                   <p className="text-[10px] font-medium uppercase tracking-widest text-accent-gold">
                     Identity in Christ
                   </p>
-                  <p className="font-display text-[14px] text-white/90 leading-relaxed italic">
+                  <p className="font-display text-[14px] text-text-primary leading-relaxed italic">
                     &ldquo;I am a child of God before I am a founder, leader, or innovator. My calling is faithfulness and fruitfulness, not self-made identity. I can learn from failure without being defined by it. My work is service and stewardship, not the source of my worth.&rdquo;
                   </p>
                 </div>
@@ -439,14 +439,14 @@ export default function ReadinessAssessmentPage() {
         <img src="/images/white-blossoms.jpg" alt="White cherry blossoms" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/45" />
         <div className="relative z-10 max-w-sm">
-          <div className="mb-6 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3.5 py-1.5">
+          <div className="mb-6 inline-flex items-center gap-2 bg-bg-base border border-border rounded-full px-3.5 py-1.5">
             <span className="text-accent-gold text-xs">✦</span>
-            <span className="text-white/70 text-[11px] font-medium uppercase tracking-widest">Readiness Assessment</span>
+            <span className="text-text-secondary text-[11px] font-medium uppercase tracking-widest">Readiness Assessment</span>
           </div>
-          <blockquote className="font-display text-[22px] text-white font-normal leading-[1.4] mb-4 italic">
+          <blockquote className="font-display text-[22px] text-text-primary font-normal leading-[1.4] mb-4 italic">
             &ldquo;Readiness does not mean certainty. You need enough humility to listen, enough courage to act, and enough honesty to name what you don&rsquo;t yet know.&rdquo;
           </blockquote>
-          <p className="text-white/50 text-sm">
+          <p className="text-text-secondary text-sm">
             Entrepreneur Readiness Assessment
           </p>
         </div>

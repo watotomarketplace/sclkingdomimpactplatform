@@ -79,7 +79,7 @@ export function NotificationPanel() {
             <p className="text-[14px] font-semibold text-text-primary">
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-accent-danger text-white rounded-full px-1.5 py-0.5 font-medium">{unreadCount}</span>
+                <span className="ml-2 text-xs bg-accent-danger text-text-primary rounded-full px-1.5 py-0.5 font-medium">{unreadCount}</span>
               )}
             </p>
             {unreadCount > 0 && (

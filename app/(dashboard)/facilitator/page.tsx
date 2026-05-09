@@ -1,12 +1,18 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { getGreeting, formatDate } from "@/lib/utils";
-import { Card, CardLabel, CardTitle } from "@/components/ui/card";
-import { StatusDot, Badge } from "@/components/ui/badge";
-import { MONTH_TITLES } from "@/lib/utils";
+import { getGreeting } from "@/lib/utils";
+import {
+  computeStatus,
+  computeUnlocked,
+  MILESTONE_ORDER,
+  MILESTONE_SHORT,
+  statusLabel,
+  statusChipClass,
+} from "@/lib/milestones";
+import { MilestoneStatus, MilestoneType } from "@/app/generated/prisma/enums";
 import Link from "next/link";
-import { Users, ClipboardCheck, AlertTriangle, TrendingUp } from "lucide-react";
+import { Users, TrendingUp, AlertTriangle, AlertOctagon } from "lucide-react";
 
 export default async function FacilitatorDashboard() {
   const session = await auth();
@@ -18,10 +24,16 @@ export default async function FacilitatorDashboard() {
       members: {
         include: {
           user: {
+            select: { id: true, name: true, email: true },
             include: {
-              participantProfile: true,
-              scorecards: { orderBy: { month: "desc" }, take: 1 },
-              submissions: { orderBy: { updatedAt: "desc" }, take: 1 },
+              milestoneSubmissions: {
+                select: {
+                  milestoneType: true,
+                  status: true,
+                  submittedAt: true,
+                  updatedAt: true,
+                },
+              },
             },
           },
         },
@@ -29,107 +41,182 @@ export default async function FacilitatorDashboard() {
     },
   });
 
-  const allParticipants = pods.flatMap((p) => p.members.map((m) => m.user));
-  const totalCount = allParticipants.length;
-
-  const getParticipantStatus = (user: typeof allParticipants[0]) => {
-    const latestScore = user.scorecards[0];
-    if (!latestScore) return "on-track" as const;
-    const statuses = [
-      latestScore.problemClarity,
-      latestScore.researchEffort,
-      latestScore.executionDiscipline,
-    ];
-    if (statuses.some((s) => s === "ESCALATE")) return "escalate" as const;
-    if (statuses.some((s) => s === "NEEDS_ATTENTION")) return "needs-attention" as const;
-    return "on-track" as const;
+  type ParticipantRow = {
+    id: string;
+    name: string | null;
+    email: string;
+    podName: string;
+    activeMilestone: MilestoneType;
+    activeStatus: MilestoneStatus;
+    lastActivityAt: Date | null;
   };
 
-  const onTrackCount = allParticipants.filter((p) => getParticipantStatus(p) === "on-track").length;
-  const needsAttentionCount = allParticipants.filter((p) => getParticipantStatus(p) === "needs-attention").length;
-  const escalateCount = allParticipants.filter((p) => getParticipantStatus(p) === "escalate").length;
+  const rows: ParticipantRow[] = pods.flatMap((pod) =>
+    pod.members.map(({ user }) => {
+      const subs = user.milestoneSubmissions;
+      const unlocked = computeUnlocked(subs);
+      // Active milestone = last unlocked
+      const activeMilestone = unlocked[unlocked.length - 1] ?? MilestoneType.ONBOARDING;
+      const subRecord = subs.find((s) => s.milestoneType === activeMilestone) ?? null;
+      const activeStatus = computeStatus(activeMilestone, subRecord);
+      const lastActivityAt =
+        subs.length > 0
+          ? subs.reduce((latest, s) =>
+              s.updatedAt > latest ? s.updatedAt : latest,
+              subs[0].updatedAt
+            )
+          : null;
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        podName: pod.name,
+        activeMilestone,
+        activeStatus,
+        lastActivityAt,
+      };
+    })
+  );
 
-  const pendingGates = await db.gateReview.count({ where: { decision: null } });
+  const totalCount = rows.length;
+  const submittedAll = rows.filter(
+    (r) => r.activeMilestone === MilestoneType.MILESTONE_4 && r.activeStatus === MilestoneStatus.SUBMITTED
+  ).length;
+  const lateCount = rows.filter((r) => r.activeStatus === MilestoneStatus.LATE).length;
+  const atRiskCount = rows.filter((r) => r.activeStatus === MilestoneStatus.AT_RISK).length;
+
+  // Sort: at-risk → late → in-progress → submitted → not-started
+  const statusOrder: Record<MilestoneStatus, number> = {
+    AT_RISK: 0,
+    LATE: 1,
+    IN_PROGRESS: 2,
+    NOT_STARTED: 3,
+    SUBMITTED: 4,
+  };
+  const sorted = [...rows].sort((a, b) => statusOrder[a.activeStatus] - statusOrder[b.activeStatus]);
 
   return (
-    <div className="px-6 py-6 max-w-[900px]">
+    <div className="min-h-full px-4 py-5 md:px-6 md:py-6 max-w-[900px]">
       {/* Greeting */}
       <div className="mb-6">
-        <h1 className="font-display text-[28px] font-semibold text-text-primary">
+        <h1 className="font-display text-[26px] font-semibold text-text-primary">
           {getGreeting(session.user.name ?? "Facilitator")}
         </h1>
-        <p className="text-text-secondary text-sm mt-1">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+        <p className="text-text-secondary text-[13px] mt-1">
+          {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+        </p>
       </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card padding="sm">
-          <CardLabel className="flex items-center gap-1"><Users size={11} />TOTAL</CardLabel>
-          <p className="text-[26px] font-semibold text-text-primary font-mono">{totalCount}</p>
-          <p className="text-xs text-text-secondary">participants</p>
-        </Card>
-        <Card padding="sm">
-          <CardLabel className="flex items-center gap-1"><TrendingUp size={11} />ON TRACK</CardLabel>
-          <p className="text-[26px] font-semibold text-accent-primary font-mono">{onTrackCount}</p>
-          <p className="text-xs text-text-secondary">participants</p>
-        </Card>
-        <Card padding="sm">
-          <CardLabel className="flex items-center gap-1"><AlertTriangle size={11} />ATTENTION</CardLabel>
-          <p className="text-[26px] font-semibold text-accent-warning font-mono">{needsAttentionCount}</p>
-          <p className="text-xs text-text-secondary">participants</p>
-        </Card>
-        <Card padding="sm">
-          <CardLabel className="flex items-center gap-1"><ClipboardCheck size={11} />PENDING GATES</CardLabel>
-          <p className="text-[26px] font-semibold text-accent-sky font-mono">{pendingGates}</p>
-          <p className="text-xs text-text-secondary">awaiting review</p>
-        </Card>
-      </div>
-
-      {/* Pods */}
-      {pods.length === 0 && (
-        <Card className="py-12 text-center">
-          <p className="text-text-secondary text-sm">No pods assigned yet. Contact your Program Admin.</p>
-        </Card>
-      )}
-
-      {pods.map((pod) => (
-        <div key={pod.id} className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[16px] font-semibold text-text-primary">{pod.name}</h2>
-            <span className="text-xs text-text-secondary">{pod.members.length} members</span>
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="glass-2 px-4 py-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <Users size={11} className="text-[#A3A3A3]" />
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Total</p>
           </div>
+          <p className="text-[28px] font-semibold text-text-primary font-mono leading-none">{totalCount}</p>
+          <p className="text-[11px] text-[#A3A3A3] mt-0.5">participants</p>
+        </div>
+        <div className="glass-2 px-4 py-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <TrendingUp size={11} className="text-[#86EFAC]" />
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Completed</p>
+          </div>
+          <p className="text-[28px] font-semibold text-[#86EFAC] font-mono leading-none">{submittedAll}</p>
+          <p className="text-[11px] text-[#A3A3A3] mt-0.5">all milestones</p>
+        </div>
+        <div className="glass-2 px-4 py-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <AlertTriangle size={11} className="text-[#FCD34D]" />
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Late</p>
+          </div>
+          <p className="text-[28px] font-semibold text-[#FCD34D] font-mono leading-none">{lateCount}</p>
+          <p className="text-[11px] text-[#A3A3A3] mt-0.5">past deadline</p>
+        </div>
+        <Link href="/facilitator/red-flags">
+          <div className="glass-2 px-4 py-4 hover:bg-bg-base transition-colors cursor-pointer">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <AlertOctagon size={11} className="text-[#FCA5A5]" />
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">At Risk</p>
+            </div>
+            <p className="text-[28px] font-semibold text-[#FCA5A5] font-mono leading-none">{atRiskCount}</p>
+            <p className="text-[11px] text-[#A3A3A3] mt-0.5">need support</p>
+          </div>
+        </Link>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {pod.members.map(({ user }) => {
-              const status = getParticipantStatus(user);
-              const currentMonth = user.participantProfile?.currentMonth ?? 1;
-              const lastSub = user.submissions[0];
+      {/* Participant list */}
+      <div className="glass-2 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+          <p className="section-label">ALL PARTICIPANTS</p>
+          <Link
+            href="/facilitator/participants"
+            className="text-[12px] text-[#C8973A] hover:text-[#FCD34D] transition-colors"
+          >
+            View full list →
+          </Link>
+        </div>
 
+        {sorted.length === 0 ? (
+          <div className="px-4 py-8 text-center">
+            <Users size={24} className="text-[#A3A3A3] mx-auto mb-2" />
+            <p className="text-[13px] text-[#A3A3A3]">No participants assigned yet.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/[0.05]">
+            {sorted.slice(0, 20).map((row) => {
+              const chipClass = statusChipClass(row.activeStatus);
+              const daysAgo = row.lastActivityAt
+                ? Math.floor((Date.now() - row.lastActivityAt.getTime()) / (1000 * 60 * 60 * 24))
+                : null;
               return (
-                <Link key={user.id} href={`/facilitator/participants/${user.id}`}>
-                  <Card className="hover:border-border-strong transition-colors cursor-pointer">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <StatusDot status={status} />
-                        <span className="text-[14px] font-medium text-text-primary">{user.name}</span>
-                      </div>
-                      <Badge variant={status === "on-track" ? "on-track" : status === "needs-attention" ? "needs-attention" : "escalate"}>
-                        {status === "on-track" ? "On Track" : status === "needs-attention" ? "Attention" : "Escalate"}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-text-secondary">Month {currentMonth} — {MONTH_TITLES[currentMonth]}</p>
-                    {lastSub && (
-                      <p className="text-xs text-text-secondary mt-1">
-                        Last activity: {formatDate(lastSub.updatedAt)}
-                      </p>
-                    )}
-                  </Card>
+                <Link
+                  key={row.id}
+                  href={`/facilitator/participants/${row.id}`}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-bg-base transition-colors"
+                >
+                  {/* Avatar */}
+                  <div className="w-8 h-8 rounded-full bg-bg-base border border-border flex items-center justify-center shrink-0">
+                    <span className="text-[11px] font-semibold text-text-secondary">
+                      {(row.name ?? row.email).charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  {/* Name + pod */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-text-primary truncate">
+                      {row.name ?? row.email}
+                    </p>
+                    <p className="text-[11px] text-[#A3A3A3]">{row.podName}</p>
+                  </div>
+                  {/* Milestone */}
+                  <div className="hidden sm:block text-right shrink-0">
+                    <p className="text-[11px] text-text-secondary">{MILESTONE_SHORT[row.activeMilestone]}</p>
+                  </div>
+                  {/* Status chip */}
+                  <span className={`${chipClass} text-[10px] shrink-0`}>
+                    {statusLabel(row.activeStatus)}
+                  </span>
+                  {/* Last activity */}
+                  <span className="text-[11px] text-[#A3A3A3] shrink-0 hidden md:block">
+                    {daysAgo === null ? "—" : daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
+                  </span>
                 </Link>
               );
             })}
           </div>
-        </div>
-      ))}
+        )}
+
+        {sorted.length > 20 && (
+          <div className="px-4 py-3 border-t border-border text-center">
+            <Link
+              href="/facilitator/participants"
+              className="text-[12px] text-[#C8973A] hover:text-[#FCD34D] transition-colors"
+            >
+              View all {sorted.length} participants →
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

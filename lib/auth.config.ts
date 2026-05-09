@@ -21,11 +21,13 @@ export const authConfig: NextAuthConfig = {
         token.role = (user as { role: Role }).role;
         token.covenantSigned = (user as { covenantSigned: boolean }).covenantSigned;
         token.readinessComplete = (user as { readinessComplete: boolean }).readinessComplete;
+        token.onboardingComplete = (user as { onboardingComplete: boolean }).onboardingComplete;
       }
       // Handle session.update() calls — merge any fields passed
       if (trigger === "update" && session) {
         if (session.covenantSigned !== undefined) token.covenantSigned = session.covenantSigned;
         if (session.readinessComplete !== undefined) token.readinessComplete = session.readinessComplete;
+        if (session.onboardingComplete !== undefined) token.onboardingComplete = session.onboardingComplete;
       }
       return token;
     },
@@ -35,6 +37,7 @@ export const authConfig: NextAuthConfig = {
         session.user.role = token.role as Role;
         session.user.covenantSigned = token.covenantSigned as boolean;
         session.user.readinessComplete = token.readinessComplete as boolean;
+        session.user.onboardingComplete = token.onboardingComplete as boolean;
       }
       return session;
     },

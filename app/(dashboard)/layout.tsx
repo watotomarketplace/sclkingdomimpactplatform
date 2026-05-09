@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { ROLE_LABELS } from "@/lib/roles";
 import { db } from "@/lib/db";
+import { computeUnlocked } from "@/lib/milestones";
+import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
 
 export default async function DashboardLayout({
   children,
@@ -18,34 +20,38 @@ export default async function DashboardLayout({
   const dbUser = await db.user.findUnique({ where: { id }, select: { id: true } });
   if (!dbUser) redirect("/api/auth/force-signout");
 
-  // Participant-specific data
-  let currentMonth = 1;
-  let unlockedMonths = [1];
+  // Milestone unlocking for participants and group leaders
+  let unlockedMilestones: MilestoneType[] = [MilestoneType.ONBOARDING];
   let pendingGates = 0;
   let redFlags = 0;
-  let notificationCount = 0;
 
-  if (role === "PARTICIPANT") {
-    const profile = await db.participantProfile.findUnique({ where: { userId: id } });
-    currentMonth = profile?.currentMonth ?? 1;
-    unlockedMonths = Array.from({ length: currentMonth }, (_, i) => i + 1);
+  if (role === "PARTICIPANT" || role === "GROUP_LEADER") {
+    const submissions = await db.milestoneSubmission.findMany({
+      where: { userId: id },
+      select: { milestoneType: true, status: true, submittedAt: true },
+    });
+    unlockedMilestones = computeUnlocked(submissions);
   }
 
   if (role === "FACILITATOR" || role === "PROGRAM_ADMIN" || role === "SUPER_ADMIN") {
-    pendingGates = await db.gateReview.count({ where: { decision: null } });
+    // Count participants whose latest milestone is late/at-risk
+    const atRisk = await db.milestoneSubmission.count({
+      where: {
+        status: { in: [MilestoneStatus.AT_RISK, MilestoneStatus.LATE] },
+      },
+    });
+    redFlags = atRisk;
   }
 
   const unread = await db.notification.count({ where: { userId: id, isRead: false } });
-  notificationCount = unread;
 
   return (
     <DashboardShell
       userName={name ?? ""}
       userRole={ROLE_LABELS[role]}
-      notificationCount={notificationCount}
+      notificationCount={unread}
       role={role}
-      currentMonth={currentMonth}
-      unlockedMonths={unlockedMonths}
+      unlockedMilestones={unlockedMilestones}
       pendingGates={pendingGates}
       redFlags={redFlags}
     >

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* SCL Design System Color Tokens — Black & White Edition */
+  /* SCL Design System Color Tokens */
   --bg-base: #F7F7F5;
   --bg-card: #FFFFFF;
   --bg-sidebar: #0A0A0A;
@@ -38,8 +38,7 @@
   --font-mono: var(--font-ibm-plex-mono);
 }
 
-html,
-body {
+html, body {
   height: 100%;
 }
 
@@ -49,36 +48,207 @@ body {
   font-family: var(--font-dm-sans, 'DM Sans', system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent horizontal overflow on mobile */
   overflow-x: hidden;
 }
 
-/* Minimum touch target size (44×44px) for interactive elements */
-button, a, [role="button"] {
-  -webkit-tap-highlight-color: transparent;
+/* ============================================================================
+   PAGE BACKGROUNDS — flat light
+   ============================================================================ */
+
+.bg-gradient-participant {
+  background-color: var(--bg-base);
 }
 
-/* Safe area padding for notched phones */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+.bg-gradient-admin {
+  background-color: var(--bg-base);
 }
 
-/* Bottom tab nav — adds safe-area-aware padding */
-nav.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+.bg-light-warm {
+  background-color: var(--bg-base);
 }
 
-/* Floating label inputs */
+/* ============================================================================
+   FLAT SURFACE UTILITIES
+   Glass class names kept for compatibility — render as plain white cards
+   ============================================================================ */
+
+.glass-1 {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.glass-2 {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(0, 0, 0, 0.03);
+}
+
+.glass-3 {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+.glass-2-hover {
+  transition: box-shadow 150ms ease-out;
+}
+.glass-2-hover:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+/* ============================================================================
+   STATUS CHIPS — flat light badges
+   ============================================================================ */
+
+.chip-not-started {
+  background: #F5F5F4;
+  color: #737373;
+  border: 1px solid #E5E5E5;
+}
+.chip-in-progress {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid #BFDBFE;
+}
+.chip-submitted {
+  background: #F0FDF4;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+.chip-late {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+.chip-at-risk {
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+}
+
+/* ============================================================================
+   FORM INPUTS
+   ============================================================================ */
+
+.input-on-glass {
+  background: #FFFFFF;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+.input-on-glass:focus,
+.input-on-glass:focus-visible {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(200, 151, 58, 0.15);
+}
+.input-on-glass::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  white-space: nowrap;
+  user-select: none;
+}
+.btn-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-gold {
+  background: var(--accent-gold);
+  color: #FFFFFF;
+  border: 1px solid var(--accent-gold);
+  border-radius: 8px;
+}
+.btn-gold:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn-primary-glass {
+  background: var(--accent-primary);
+  color: white;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10);
+}
+.btn-primary-glass:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-glass-secondary {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-glass-secondary:hover:not(:disabled) {
+  background: var(--bg-card);
+  border-color: var(--border-strong);
+}
+
+/* ============================================================================
+   CALLOUT BOXES
+   ============================================================================ */
+
+.callout-gold {
+  background: #FEFCE8;
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.25rem;
+  color: var(--text-primary);
+}
+.callout-identity {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 16px;
+  padding: 1.25rem;
+  color: var(--text-primary);
+}
+.callout-warning {
+  background: #FEF2F2;
+  border-left: 3px solid var(--accent-danger);
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.25rem;
+  color: var(--text-primary);
+}
+
+/* ============================================================================
+   SECTION LABELS
+   ============================================================================ */
+
+.section-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   FLOATING LABELS
+   ============================================================================ */
+
 .floating-label-group {
   position: relative;
 }
-
 .floating-label-group input,
 .floating-label-group textarea {
   padding-top: 1.5rem;
   padding-bottom: 0.5rem;
 }
-
 .floating-label-group label {
   position: absolute;
   top: 50%;
@@ -89,12 +259,10 @@ nav.safe-bottom {
   color: var(--text-secondary);
   font-size: 0.9375rem;
 }
-
 .floating-label-group textarea ~ label {
   top: 1.25rem;
   transform: none;
 }
-
 .floating-label-group input:focus ~ label,
 .floating-label-group input:not(:placeholder-shown) ~ label,
 .floating-label-group textarea:focus ~ label,
@@ -108,49 +276,147 @@ nav.safe-bottom {
   color: var(--text-secondary);
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* ============================================================================
+   HIGHLIGHTED FIELD
+   ============================================================================ */
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-/* Auto-save indicator animation */
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.draft-saved {
-  animation: fadeInOut 2s ease-in-out forwards;
-}
-
-/* Section label pattern (uppercase small caps) */
-.section-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-}
-
-/* Highlighted field (key outputs) */
 .field-highlighted {
   border-left: 3px solid var(--accent-primary);
   background-color: rgba(45, 90, 61, 0.04);
   border-radius: 0 8px 8px 0;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.draft-saved {
+  animation: fadeInOut 2s ease-in-out forwards;
+}
+
+@keyframes saved-fade {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fade-in-up 250ms ease-out both;
+}
+.fade-in-up.delay-1 { animation-delay: 50ms; }
+.fade-in-up.delay-2 { animation-delay: 100ms; }
+.fade-in-up.delay-3 { animation-delay: 150ms; }
+.fade-in-up.delay-4 { animation-delay: 200ms; }
+.fade-in-up.delay-5 { animation-delay: 250ms; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in { animation: fade-in 180ms ease-out both; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1.0); }
+}
+.scale-in { animation: scale-in 200ms ease-out both; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+.input-error-shake {
+  animation: shake 200ms ease-in-out 2;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.8; }
+}
+.skeleton {
+  background: var(--border);
+  border-radius: 6px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer-move 1.2s ease-in-out 1;
+  pointer-events: none;
+}
+@keyframes shimmer-move {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   SCROLLBARS
+   ============================================================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ============================================================================
+   SAFE-AREA UTILITIES
+   ============================================================================ */
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+nav.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
 }

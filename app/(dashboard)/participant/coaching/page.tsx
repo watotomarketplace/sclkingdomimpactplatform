@@ -115,15 +115,15 @@ export default function CoachingPage() {
       <Card className="mb-6 bg-[#0A0A0A] border-0">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[13px] font-semibold text-white mb-1">
+            <p className="text-[13px] font-semibold text-text-primary mb-1">
               Book a 1-on-1 with your facilitator
             </p>
-            <p className="text-[12px] text-white/60 leading-relaxed">
+            <p className="text-[12px] text-text-secondary leading-relaxed">
               Use the link below to schedule a session directly in your facilitator's calendar. After
               your session, log it here to keep your record up to date.
             </p>
           </div>
-          <CalendarDays size={20} className="text-white/40 shrink-0 mt-0.5" />
+          <CalendarDays size={20} className="text-[#A3A3A3] shrink-0 mt-0.5" />
         </div>
         <a
           href="#"

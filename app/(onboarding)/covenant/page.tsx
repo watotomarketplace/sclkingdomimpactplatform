@@ -46,7 +46,7 @@ export default function CovenantPage() {
         <div className="max-w-[420px] mx-auto w-full">
           <div className="flex items-center gap-2.5 mb-8">
             <div className="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold font-display">S</span>
+              <span className="text-text-primary text-sm font-bold font-display">S</span>
             </div>
             <span className="text-[15px] font-semibold text-text-primary">SCL Platform</span>
           </div>
@@ -103,14 +103,14 @@ export default function CovenantPage() {
         <img src="/images/sonoma.jpg" alt="Rolling vineyard hills" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10">
-          <div className="mb-5 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3.5 py-1.5">
+          <div className="mb-5 inline-flex items-center gap-2 bg-bg-base border border-border rounded-full px-3.5 py-1.5">
             <span className="text-accent-gold text-xs">✦</span>
-            <span className="text-white/70 text-[11px] font-medium uppercase tracking-widest">Venture Covenant</span>
+            <span className="text-text-secondary text-[11px] font-medium uppercase tracking-widest">Venture Covenant</span>
           </div>
-          <h2 className="font-display text-[36px] font-normal text-white leading-[1.2] mb-4">
+          <h2 className="font-display text-[36px] font-normal text-text-primary leading-[1.2] mb-4">
             This is not a formality.<br />It is a foundation.
           </h2>
-          <p className="text-white/55 text-sm leading-relaxed max-w-sm">
+          <p className="text-text-secondary text-sm leading-relaxed max-w-sm">
             The covenant you sign today is the foundation of everything you will build
             over the next six months.
           </p>

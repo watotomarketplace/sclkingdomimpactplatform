@@ -22,7 +22,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user || !user.passwordHash) return null;
         if (!user.isActive) return null;
-        if (!user.emailVerified) return null;
+        // emailVerified check removed — accounts are admin-pre-created for 2026 cohort
+        // and do not go through an email verification flow (PRD Addendum 3 §3.2).
 
         const isValid = await bcrypt.compare(
           credentials.password as string,
@@ -37,6 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role,
           covenantSigned: user.covenantSigned,
           readinessComplete: user.readinessComplete,
+          onboardingComplete: user.onboardingComplete,
           emailVerified: user.emailVerified?.toISOString() ?? null,
         };
       },

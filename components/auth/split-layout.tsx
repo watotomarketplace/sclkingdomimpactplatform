@@ -20,7 +20,7 @@ export function SplitLayout({ children, imageSrc, imageAlt = "Atmospheric image"
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/50" />
           {/* Logo over image on mobile */}
           <div className="absolute bottom-4 left-5 flex items-center gap-2">
-            <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 flex items-center justify-center">
+            <div className="w-7 h-7 bg-white/20 backdrop-blur-none rounded-lg border border-white/30 flex items-center justify-center">
               <span className="text-white text-xs font-bold font-display">S</span>
             </div>
             <span className="text-white/90 text-[13px] font-semibold">SCL Platform</span>
@@ -74,7 +74,7 @@ export function SplitLayout({ children, imageSrc, imageAlt = "Atmospheric image"
         <div className="relative z-10">
           {rightContent || (
             <>
-              <div className="mb-6 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3.5 py-1.5">
+              <div className="mb-6 inline-flex items-center gap-2 bg-white/10 backdrop-blur-none border border-white/20 rounded-full px-3.5 py-1.5">
                 <span className="text-accent-gold text-xs">✦</span>
                 <span className="text-white/70 text-[11px] font-medium uppercase tracking-widest">SCL Kingdom Impact Work</span>
               </div>

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Settings, LogOut, ChevronDown, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { NotificationPanel } from "@/components/layout/notification-panel";
 
 interface TopbarProps {
@@ -31,7 +30,6 @@ export function Topbar({
   return (
     <header className="h-14 bg-white border-b border-border flex items-center px-3 md:px-5 gap-2 md:gap-4 shrink-0 z-10">
 
-      {/* Mobile: hamburger */}
       {onMenuToggle && (
         <button
           onClick={onMenuToggle}
@@ -42,22 +40,18 @@ export function Topbar({
         </button>
       )}
 
-      {/* Desktop: spacer that aligns with sidebar width */}
+      {/* Desktop: spacer aligned with sidebar */}
       <div className="w-[196px] shrink-0 hidden md:block" />
 
-      {/* Page title / flex spacer */}
       {pageTitle ? (
         <h1 className="text-[15px] font-semibold text-text-primary flex-1 truncate">{pageTitle}</h1>
       ) : (
         <div className="flex-1" />
       )}
 
-      {/* Actions */}
       <div className="flex items-center gap-1">
-        {/* Notifications */}
         <NotificationPanel />
 
-        {/* User menu */}
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -75,9 +69,8 @@ export function Topbar({
 
           {menuOpen && (
             <>
-              {/* Click-outside overlay */}
               <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-border rounded-lg shadow-lg py-1 z-50">
+              <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-border rounded-xl shadow-lg py-1 z-50 scale-in">
                 <div className="px-3 py-2 border-b border-border">
                   <p className="text-[13px] font-medium text-text-primary truncate">{userName}</p>
                   <p className="text-[11px] text-text-secondary">{userRole}</p>
