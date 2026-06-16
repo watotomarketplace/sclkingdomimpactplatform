@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { DeleteUserButton } from "@/components/super-admin/delete-user-button";
 import { UserFormModal } from "@/components/super-admin/user-form-modal";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Eye } from "lucide-react";
 
 type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "GROUP_LEADER" | "PARTICIPANT";
 
@@ -104,6 +105,15 @@ export function AllUsersClient({ grouped, totalCount }: AllUsersClientProps) {
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
+                    {(u.role === "PARTICIPANT" || u.role === "GROUP_LEADER") && (
+                      <Link
+                        href={`/facilitator/participants/${u.id}`}
+                        className="text-text-secondary hover:text-text-primary transition-colors"
+                        title="View submissions"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
                     {u.role !== "SUPER_ADMIN" && (
                       <DeleteUserButton userId={u.id} userName={u.name} userRole={u.role} />
                     )}

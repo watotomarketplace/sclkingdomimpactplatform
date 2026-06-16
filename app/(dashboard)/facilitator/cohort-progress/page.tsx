@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { hasAccess } from "@/lib/roles";
+import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role } from "@/app/generated/prisma/client";
 import { CohortProgressTable } from "@/components/shared/cohort-progress-table";
 
@@ -15,10 +15,12 @@ function getOverallStatus(sc: { problemClarity: string; researchEffort: string; 
 export default async function FacilitatorCohortProgressPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!hasAccess(session.user.role, Role.FACILITATOR)) redirect("/");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
+
+  const adminView = isAdmin(session.user.role as Role);
 
   const pods = await db.pod.findMany({
-    where: { facilitatorId: session.user.id },
+    where: adminView ? {} : { facilitatorId: session.user.id },
     include: {
       members: {
         include: {

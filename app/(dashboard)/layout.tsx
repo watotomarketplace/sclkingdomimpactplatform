@@ -14,7 +14,11 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const { role, name, id } = session.user;
+  const { name, id } = session.user;
+  const role = session.user.role;
+
+  // Guard: malformed token with no role — sign out cleanly rather than crash
+  if (!role) redirect("/api/auth/force-signout");
 
   // Validate the user still exists in the DB.
   const dbUser = await db.user.findUnique({ where: { id }, select: { id: true } });

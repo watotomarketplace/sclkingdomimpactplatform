@@ -1,29 +1,30 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { hasAccess } from "@/lib/roles";
+import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role } from "@/app/generated/prisma/enums";
 import { CalendarDays, Video } from "lucide-react";
 
 export default async function FacilitatorCoachingUpcomingPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!hasAccess(session.user.role, Role.FACILITATOR)) redirect("/");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
-  // Get all participants in this facilitator's pods
+  const adminView = isAdmin(session.user.role as Role);
+
+  // Get pods (all for admin, own pods for facilitator)
   const pods = await db.pod.findMany({
-    where: { facilitatorId: session.user.id },
+    where: adminView ? {} : { facilitatorId: session.user.id },
     include: { members: { include: { user: { select: { id: true, name: true, email: true } } } } },
   });
-  const participantIds = pods.flatMap((p) => p.members.map((m) => m.userId));
+  const participantIds = adminView ? undefined : pods.flatMap((p) => p.members.map((m) => m.userId));
+  const sessionWhere = (extra: object) =>
+    participantIds ? { participantId: { in: participantIds }, ...extra } : extra;
 
   // Upcoming sessions (future dates)
   const now = new Date();
   const upcomingSessions = await db.coachingSession.findMany({
-    where: {
-      participantId: { in: participantIds },
-      sessionDate: { gte: now },
-    },
+    where: sessionWhere({ sessionDate: { gte: now } }),
     include: { participant: { select: { name: true, email: true } } },
     orderBy: { sessionDate: "asc" },
     take: 50,
@@ -32,10 +33,7 @@ export default async function FacilitatorCoachingUpcomingPage() {
   // Recent past sessions (last 30 days)
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const recentSessions = await db.coachingSession.findMany({
-    where: {
-      participantId: { in: participantIds },
-      sessionDate: { gte: thirtyDaysAgo, lt: now },
-    },
+    where: sessionWhere({ sessionDate: { gte: thirtyDaysAgo, lt: now } }),
     include: { participant: { select: { name: true, email: true } } },
     orderBy: { sessionDate: "desc" },
     take: 20,

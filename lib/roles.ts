@@ -14,6 +14,15 @@ export function hasAccess(userRole: Role, requiredRole: Role): boolean {
 }
 
 /**
+ * Returns true for SUPER_ADMIN and PROGRAM_ADMIN.
+ * Use to decide whether to remove cohort/pod scoping from data queries —
+ * admins have universal visibility across all cohorts by PRD design.
+ */
+export function isAdmin(role: Role): boolean {
+  return role === Role.SUPER_ADMIN || role === Role.PROGRAM_ADMIN;
+}
+
+/**
  * Where to send a user after login.
  * Addendum 3: Participants who haven't completed the MVI Brief go to /onboarding.
  */

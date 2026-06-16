@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { hasAccess } from "@/lib/roles";
+import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role, MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
 import { MilestoneReviewPanel } from "@/components/facilitator/milestone-review-panel";
 import { Search, CheckCircle2, Clock } from "lucide-react";
@@ -20,19 +20,24 @@ const FIELDS = [
 export default async function ReviewMilestone1Page() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!hasAccess(session.user.role, Role.FACILITATOR)) redirect("/");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
-  const pods = await db.pod.findMany({
-    where: { facilitatorId: session.user.id },
-    include: { members: { select: { userId: true } } },
-  });
-  const participantIds = pods.flatMap((p) => p.members.map((m) => m.userId));
+  const adminView = isAdmin(session.user.role as Role);
+
+  let participantFilter: { userId?: { in: string[] } } = {};
+  if (!adminView) {
+    const pods = await db.pod.findMany({
+      where: { facilitatorId: session.user.id },
+      include: { members: { select: { userId: true } } },
+    });
+    participantFilter = { userId: { in: pods.flatMap((p) => p.members.map((m) => m.userId)) } };
+  }
 
   const submissions = await db.milestoneSubmission.findMany({
     where: {
       milestoneType: MilestoneType.MILESTONE_1,
       status: MilestoneStatus.SUBMITTED,
-      userId: { in: participantIds },
+      ...participantFilter,
     },
     include: { user: { select: { id: true, name: true, email: true } } },
     orderBy: { submittedAt: "asc" },

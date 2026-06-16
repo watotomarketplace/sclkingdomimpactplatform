@@ -1,30 +1,105 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { Card, CardLabel, CardTitle } from "@/components/ui/card";
+import { Card, CardLabel } from "@/components/ui/card";
 import { Badge, StatusDot } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatDateTime, MONTH_TITLES } from "@/lib/utils";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Paperclip, FileText } from "lucide-react";
 import { CoachingNoteForm } from "@/components/facilitator/coaching-note-form";
 import { ScorecardAnnotationForm } from "@/components/facilitator/scorecard-annotation-form";
 import { AttendanceToggle } from "@/components/facilitator/attendance-toggle";
-import { hasAccess } from "@/lib/roles";
-import { Role } from "@/app/generated/prisma/client";
+import { MilestoneReviewPanel } from "@/components/facilitator/milestone-review-panel";
+import { hasAccess, isAdmin } from "@/lib/roles";
+import { Role, MilestoneType } from "@/app/generated/prisma/client";
+import { MILESTONE_TITLES, statusLabel, statusChipClass } from "@/lib/milestones";
+
+// Field label maps — mirrors the milestone page definitions so the review panel shows human labels.
+const MILESTONE_FIELDS: Record<MilestoneType, { key: string; label: string }[]> = {
+  ONBOARDING: [
+    { key: "initiativeName",    label: "Initiative name" },
+    { key: "problemStatement",  label: "Problem statement" },
+    { key: "healingHoped",      label: "The healing hoped for" },
+    { key: "beneficiaries",     label: "Beneficiaries" },
+    { key: "mviSummary",        label: "MVI summary" },
+    { key: "singleAssumption",  label: "Single assumption to test" },
+    { key: "buyInNeeded",       label: "Buy-in needed" },
+    { key: "resourcesRequired", label: "Resources required" },
+    { key: "realisticTimeline", label: "Realistic timeline" },
+    { key: "likelyResistance",  label: "Likely resistance" },
+    { key: "evidencePlan",      label: "Evidence plan" },
+    { key: "firstTestDate",     label: "First test date" },
+  ],
+  MILESTONE_1: [
+    { key: "initiativeType",           label: "Initiative type" },
+    { key: "refinedProblemStatement",  label: "Refined problem statement" },
+    { key: "conversationsSummary",     label: "Conversations with beneficiaries (min 3)" },
+    { key: "whatIsNowClearer",         label: "What is now clearer" },
+    { key: "whatTheyHadWrong",         label: "What they had wrong" },
+    { key: "changesToMVI",             label: "Changes to MVI" },
+    { key: "mviBuildProgress",         label: "MVI build progress" },
+    { key: "supportingFile",           label: "Supporting evidence" },
+  ],
+  MILESTONE_2: [
+    { key: "testCycle1Date",       label: "Test cycle 1 — date" },
+    { key: "testCycle1Assumption", label: "Test cycle 1 — assumption" },
+    { key: "testCycle1WhatBuilt",  label: "Test cycle 1 — what was built" },
+    { key: "testCycle1WhoTested",  label: "Test cycle 1 — who tested" },
+    { key: "testCycle1WhatTheyDid",   label: "Test cycle 1 — what they did" },
+    { key: "testCycle1WhatLearned",   label: "Test cycle 1 — what was learned" },
+    { key: "testCycle2",           label: "Test cycle 2 (optional)" },
+    { key: "behaviouralEvidence",  label: "Behavioural evidence" },
+    { key: "mviStatus",            label: "MVI status after testing" },
+    { key: "supportingFile",       label: "Supporting file" },
+    { key: "audioNote",            label: "Audio note" },
+  ],
+  MILESTONE_3: [
+    { key: "whereRunningNow",          label: "Where initiative is running" },
+    { key: "frequencyRhythm",          label: "Frequency and rhythm" },
+    { key: "numbersReached",           label: "Numbers reached" },
+    { key: "specificImpactStory",      label: "Specific impact story" },
+    { key: "resistanceWhatPushedBack", label: "Resistance — what pushed back" },
+    { key: "resistanceFromWhom",       label: "Resistance — from whom" },
+    { key: "resistanceHowResponded",   label: "Resistance — how you responded" },
+    { key: "whatIsBecomingClearer",    label: "What is becoming clearer" },
+    { key: "artefact",                 label: "Artefact / evidence file" },
+  ],
+  MILESTONE_4: [
+    { key: "initiativeNameFinal",          label: "Initiative name (final)" },
+    { key: "brokennessAddressed",          label: "Brokenness addressed" },
+    { key: "whatWasBuilt",                 label: "What was built" },
+    { key: "whatChangedWithEvidence",      label: "What changed (with evidence)" },
+    { key: "whatDidntWork",                label: "What didn't work" },
+    { key: "whatTheyWouldDoDifferently",   label: "What you'd do differently" },
+    { key: "whatHappensNext",              label: "What happens next" },
+    { key: "dedication",                   label: "Dedication" },
+    { key: "presentationFile",             label: "Final presentation file" },
+  ],
+};
 
 export default async function ParticipantDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!hasAccess(session.user.role, Role.FACILITATOR)) redirect("/");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
   const { id } = await params;
+
+  // Facilitators can only view participants in their own pods; admins have unrestricted access
+  if (!isAdmin(session.user.role as Role)) {
+    const membership = await db.podMember.findFirst({
+      where: { userId: id, pod: { facilitatorId: session.user.id } },
+    });
+    if (!membership) notFound();
+  }
 
   const participant = await db.user.findUnique({
     where: { id },
     include: {
       participantProfile: { include: { cohort: true } },
       podMembership: { include: { pod: true } },
+      // Addendum 3 primary model
+      milestoneSubmissions: { orderBy: { milestoneType: "asc" } },
+      // Legacy model (kept for historical visibility)
       submissions: { orderBy: [{ month: "asc" }, { phase: "asc" }] },
       scorecards: { orderBy: { month: "asc" } },
       journals: { orderBy: { month: "asc" } },
@@ -41,7 +116,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
   const currentMonth = participant.participantProfile?.currentMonth ?? 1;
 
   return (
-    <div className="px-6 py-6 max-w-[780px]">
+    <div className="px-6 py-6 max-w-[820px]">
       <Link href="/facilitator" className="flex items-center gap-1 text-text-secondary hover:text-text-primary text-sm mb-4 transition-colors">
         <ChevronLeft size={16} /> Pod Overview
       </Link>
@@ -57,15 +132,20 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
                   ? "text-emerald-700 bg-emerald-50 border-emerald-200"
                   : "text-sky-700 bg-sky-50 border-sky-200"
               }`}>
-                {participant.participantProfile.category === "ENTREPRENEUR" ? "🌱" : "🏢"}
                 {participant.participantProfile.category === "ENTREPRENEUR" ? "Entrepreneur" : "Intrapreneur"}
               </span>
             )}
           </div>
           <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-            <span className="text-text-secondary text-sm">{participant.podMembership?.pod.name ?? "No pod"}</span>
+            <span className="text-text-secondary text-sm">{participant.email}</span>
             <span className="text-text-secondary">·</span>
-            <span className="text-text-secondary text-sm">Month {currentMonth} — {MONTH_TITLES[currentMonth]}</span>
+            <span className="text-text-secondary text-sm">{participant.podMembership?.pod.name ?? "No pod assigned"}</span>
+            {participant.participantProfile?.cohort && (
+              <>
+                <span className="text-text-secondary">·</span>
+                <span className="text-text-secondary text-sm">{participant.participantProfile.cohort.name}</span>
+              </>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -77,63 +157,86 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
         </div>
       </div>
 
-      {/* Tabs as anchor sections */}
-      <div className="flex gap-4 border-b border-border mb-6 text-sm">
-        {["Submissions", "Scorecard", "Journal", "Coaching Notes", "Readiness Assessment"].map((tab) => (
+      {/* Tab anchors */}
+      <div className="flex gap-4 border-b border-border mb-6 text-sm overflow-x-auto">
+        {["Milestone Submissions", "Scorecard", "Journal", "Coaching Notes", "Readiness Assessment"].map((tab) => (
           <a key={tab} href={`#${tab.toLowerCase().replace(/ /g, "-")}`}
-            className="pb-2 text-text-secondary hover:text-text-primary border-b-2 border-transparent hover:border-accent-gold transition-colors">
+            className="pb-2 whitespace-nowrap text-text-secondary hover:text-text-primary border-b-2 border-transparent hover:border-accent-gold transition-colors">
             {tab}
           </a>
         ))}
       </div>
 
-      {/* Submissions */}
-      <section id="submissions" className="mb-8">
-        <h2 className="text-[16px] font-semibold text-text-primary mb-3">Submissions</h2>
-        {participant.submissions.length === 0 ? (
+      {/* ── Milestone Submissions (Addendum 3) ──────────────────────────── */}
+      <section id="milestone-submissions" className="mb-10">
+        <h2 className="text-[16px] font-semibold text-text-primary mb-3">Milestone Submissions</h2>
+
+        {participant.milestoneSubmissions.length === 0 ? (
           <Card className="py-8 text-center">
-            <p className="text-text-secondary text-sm">No submissions yet.</p>
+            <FileText size={24} className="text-text-secondary mx-auto mb-2" />
+            <p className="text-text-secondary text-sm">No milestone submissions yet.</p>
           </Card>
         ) : (
           <div className="space-y-3">
-            {participant.submissions.map((sub) => (
-              <Card key={sub.id} padding="sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[14px] font-medium text-text-primary">
-                      Month {sub.month} Phase {sub.phase}
-                    </p>
-                    {sub.submittedAt && (
-                      <p className="text-xs text-text-secondary mt-0.5">Submitted {formatDateTime(sub.submittedAt)}</p>
-                    )}
-                  </div>
-                  <Badge variant={sub.status === "SUBMITTED" ? "submitted" : sub.status === "DRAFT" ? "gold" : "locked"}>
-                    {sub.status}
-                  </Badge>
-                </div>
-                {sub.status === "SUBMITTED" && (
-                  <details className="mt-3">
-                    <summary className="text-xs text-accent-primary cursor-pointer hover:underline">View content</summary>
-                    <div className="mt-2 space-y-2">
-                      {Object.entries(sub.formData as Record<string, string>)
-                        .filter(([, v]) => v)
-                        .slice(0, 6)
-                        .map(([k, v]) => (
-                          <div key={k}>
-                            <p className="text-[10px] uppercase font-medium text-text-secondary">{k.replace(/_/g, " ")}</p>
-                            <p className="text-[13px] text-text-primary">{v}</p>
-                          </div>
-                        ))}
+            {participant.milestoneSubmissions.map((sub) => {
+              const fields = MILESTONE_FIELDS[sub.milestoneType] ?? [];
+              const formData = (sub.formData ?? {}) as Record<string, string>;
+              const fileUrls = Array.isArray(sub.fileUrls) ? (sub.fileUrls as string[]) : [];
+
+              // Collect file-type field URLs from formData as a fallback
+              const fileFieldUrls = fields
+                .filter((f) => f.key.toLowerCase().includes("file") || f.key === "audioNote" || f.key === "artefact")
+                .map((f) => ({ label: f.label, url: formData[f.key] ?? "" }))
+                .filter((f) => f.url.startsWith("https://"));
+
+              const allFiles = [
+                ...fileUrls.map((url) => ({ label: "Uploaded file", url })),
+                ...fileFieldUrls,
+              ].filter((f, i, arr) => arr.findIndex((x) => x.url === f.url) === i); // dedup
+
+              return (
+                <div key={sub.id} className="space-y-1">
+                  <MilestoneReviewPanel
+                    submission={{
+                      id: sub.id,
+                      userId: sub.userId,
+                      userName: participant.name,
+                      userEmail: participant.email,
+                      milestoneType: sub.milestoneType,
+                      status: sub.status,
+                      formData: formData as Record<string, unknown>,
+                      submittedAt: sub.submittedAt,
+                      reviewedById: sub.reviewedById,
+                      reviewNotes: sub.reviewNotes,
+                    }}
+                    fields={fields}
+                    canReview={true}
+                  />
+                  {allFiles.length > 0 && (
+                    <div className="px-4 py-2 bg-bg-base border border-border rounded-b-xl -mt-1 space-y-1">
+                      <p className="text-[10px] uppercase font-semibold text-text-secondary tracking-wider">Uploaded files</p>
+                      {allFiles.map((f, i) => (
+                        <a
+                          key={i}
+                          href={f.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-[13px] text-accent-primary hover:underline"
+                        >
+                          <Paperclip size={12} />
+                          {f.label}
+                        </a>
+                      ))}
                     </div>
-                  </details>
-                )}
-              </Card>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
 
-      {/* Scorecard */}
+      {/* ── Scorecard ───────────────────────────────────────────────────── */}
       <section id="scorecard" className="mb-8">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Scorecards</h2>
         {participant.scorecards.length === 0 ? (
@@ -155,7 +258,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
                     ["Peer Engagement", sc.peerEngagement],
                   ].map(([label, val]) => (
                     <div key={label as string}>
-                      <p className="text-text-secondary">{label as string}</p>
+                      <p className="text-text-secondary mb-0.5">{label as string}</p>
                       <Badge variant={
                         val === "ON_TRACK" ? "on-track" :
                         val === "NEEDS_ATTENTION" ? "needs-attention" : "escalate"
@@ -176,7 +279,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
         )}
       </section>
 
-      {/* Journal */}
+      {/* ── Journal ─────────────────────────────────────────────────────── */}
       <section id="journal" className="mb-8">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Journal Entries</h2>
         {participant.journals.length === 0 ? (
@@ -194,7 +297,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
                 {j.isPrivate ? (
                   <p className="text-text-secondary text-sm italic">This entry is marked private.</p>
                 ) : (
-                  <p className="text-sm text-text-primary">{j.prompt1?.slice(0, 120)}{(j.prompt1?.length ?? 0) > 120 ? "…" : ""}</p>
+                  <p className="text-sm text-text-primary">{j.prompt1?.slice(0, 140)}{(j.prompt1?.length ?? 0) > 140 ? "…" : ""}</p>
                 )}
               </Card>
             ))}
@@ -202,7 +305,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
         )}
       </section>
 
-      {/* Coaching Notes */}
+      {/* ── Coaching Notes ───────────────────────────────────────────────── */}
       <section id="coaching-notes" className="mb-8">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Coaching Notes</h2>
         <CoachingNoteForm recipientId={id} recipientName={participant.name} />
@@ -221,7 +324,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
         )}
       </section>
 
-      {/* Readiness Assessment */}
+      {/* ── Readiness Assessment ─────────────────────────────────────────── */}
       <section id="readiness-assessment" className="mb-8">
         <h2 className="text-[16px] font-semibold text-text-primary mb-3">Readiness Assessment</h2>
         {participant.readinessAssessments.length === 0 ? (
@@ -240,17 +343,16 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
           const completedCount = participant.readinessAssessments.filter(
             (a) => a.currentAnswer && a.currentAnswer.trim().length > 0
           ).length;
-          const isInProgress = completedCount < 6;
           const lastUpdated = participant.readinessAssessments.reduce(
             (latest, a) => a.updatedAt > latest ? a.updatedAt : latest,
             participant.readinessAssessments[0].updatedAt
           );
           return (
             <div className="space-y-4">
-              {isInProgress && (
+              {completedCount < 6 && (
                 <Card padding="sm" className="border-l-4 border-accent-gold">
                   <p className="text-sm text-text-secondary">
-                    Assessment in progress — {completedCount} of 6 questions completed.
+                    Assessment in progress — {completedCount} of 6 questions answered.
                   </p>
                 </Card>
               )}
@@ -259,7 +361,7 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
                 <Card key={answer.id} padding="sm">
                   <CardLabel>QUESTION {answer.questionNumber}</CardLabel>
                   <p className="text-[14px] font-medium text-text-primary mb-3">
-                    {QUESTION_TITLES[answer.questionNumber]}
+                    {QUESTION_TITLES[answer.questionNumber] ?? `Question ${answer.questionNumber}`}
                   </p>
                   <div className="space-y-3">
                     <div>

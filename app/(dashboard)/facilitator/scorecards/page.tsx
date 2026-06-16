@@ -1,17 +1,19 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { hasAccess } from "@/lib/roles";
-import { Role } from "@/app/generated/prisma/client";
+import { hasAccess, isAdmin } from "@/lib/roles";
+import { Role } from "@/app/generated/prisma/enums";
 import { ScorecardsTable } from "@/components/shared/scorecards-table";
 
 export default async function FacilitatorScorecardsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!hasAccess(session.user.role, Role.FACILITATOR)) redirect("/");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
+
+  const adminView = isAdmin(session.user.role as Role);
 
   const pods = await db.pod.findMany({
-    where: { facilitatorId: session.user.id },
+    where: adminView ? {} : { facilitatorId: session.user.id },
     include: {
       members: {
         include: {

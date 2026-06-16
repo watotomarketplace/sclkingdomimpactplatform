@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { put } from "@vercel/blob";
 
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.error("[upload] BLOB_READ_WRITE_TOKEN is not set — file uploads will fail.");
+}
+
 const MAX_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
 
 const ALLOWED_TYPES: Record<string, string> = {
@@ -59,6 +63,13 @@ export async function POST(req: Request) {
   // Scope the blob path to the user for organisation
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const pathname = `submissions/${session.user.id}/${Date.now()}_${safeName}`;
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      { error: "File storage is not configured. Please contact support." },
+      { status: 503 }
+    );
+  }
 
   try {
     const blob = await put(pathname, file, {

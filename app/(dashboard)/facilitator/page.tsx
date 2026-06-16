@@ -10,22 +10,28 @@ import {
   statusLabel,
   statusChipClass,
 } from "@/lib/milestones";
-import { MilestoneStatus, MilestoneType } from "@/app/generated/prisma/enums";
+import { MilestoneStatus, MilestoneType, Role } from "@/app/generated/prisma/enums";
+import { hasAccess, isAdmin } from "@/lib/roles";
 import Link from "next/link";
 import { Users, TrendingUp, AlertTriangle, AlertOctagon } from "lucide-react";
 
 export default async function FacilitatorDashboard() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
+
+  const adminView = isAdmin(session.user.role as Role);
 
   const pods = await db.pod.findMany({
-    where: { facilitatorId: session.user.id },
+    where: adminView ? {} : { facilitatorId: session.user.id },
     include: {
       members: {
         include: {
           user: {
-            select: { id: true, name: true, email: true },
-            include: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
               milestoneSubmissions: {
                 select: {
                   milestoneType: true,
