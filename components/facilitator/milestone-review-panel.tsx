@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, CheckCircle2, MessageSquare, Clock } from "lucide-react";
+import { ChevronDown, ChevronUp, CheckCircle2, MessageSquare, Clock, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
@@ -124,16 +124,32 @@ export function MilestoneReviewPanel({
         <div className="px-4 pb-4 border-t border-border">
           {/* Form fields */}
           <div className="space-y-3 mt-4">
-            {fields.map((f) => (
-              <div key={f.key}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A3A3A3] mb-0.5">
-                  {f.label}
-                </p>
-                <p className="text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap">
-                  {formData[f.key] || <span className="text-[#A3A3A3] italic">Not provided</span>}
-                </p>
-              </div>
-            ))}
+            {fields.map((f) => {
+              const val = formData[f.key];
+              const isUrl = typeof val === "string" && val.startsWith("https://");
+              return (
+                <div key={f.key}>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A3A3A3] mb-0.5">
+                    {f.label}
+                  </p>
+                  {isUrl ? (
+                    <a
+                      href={val}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-[13px] text-[#86EFAC] hover:underline"
+                    >
+                      <Paperclip size={12} />
+                      View uploaded file
+                    </a>
+                  ) : (
+                    <p className="text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap">
+                      {val || <span className="text-[#A3A3A3] italic">Not provided</span>}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Review note */}

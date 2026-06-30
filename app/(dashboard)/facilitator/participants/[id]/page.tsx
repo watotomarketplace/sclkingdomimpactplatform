@@ -10,9 +10,10 @@ import { CoachingNoteForm } from "@/components/facilitator/coaching-note-form";
 import { ScorecardAnnotationForm } from "@/components/facilitator/scorecard-annotation-form";
 import { AttendanceToggle } from "@/components/facilitator/attendance-toggle";
 import { MilestoneReviewPanel } from "@/components/facilitator/milestone-review-panel";
+import { MilestoneUnlockButton } from "@/components/facilitator/milestone-unlock-button";
 import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role, MilestoneType } from "@/app/generated/prisma/client";
-import { MILESTONE_TITLES, statusLabel, statusChipClass } from "@/lib/milestones";
+import { MILESTONE_TITLES, MILESTONE_ORDER, computeUnlocked, statusLabel, statusChipClass } from "@/lib/milestones";
 
 // Field label maps — mirrors the milestone page definitions so the review panel shows human labels.
 const MILESTONE_FIELDS: Record<MilestoneType, { key: string; label: string }[]> = {
@@ -112,6 +113,11 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
   });
 
   if (!participant) notFound();
+
+  const adminView = isAdmin(session.user.role as Role);
+  const lockedMilestones = MILESTONE_ORDER.filter(
+    (m) => !computeUnlocked(participant.milestoneSubmissions).includes(m)
+  );
 
   const currentMonth = participant.participantProfile?.currentMonth ?? 1;
 
@@ -232,6 +238,20 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {adminView && lockedMilestones.length > 0 && (
+          <div className="mt-4 glass-2 px-4 py-3">
+            <p className="section-label mb-2">ADMIN — LOCKED MILESTONES</p>
+            <div className="space-y-2">
+              {lockedMilestones.map((m) => (
+                <div key={m} className="flex items-center justify-between gap-3">
+                  <span className="text-[13px] text-text-secondary">{MILESTONE_TITLES[m]}</span>
+                  <MilestoneUnlockButton participantId={id} targetMilestone={m} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </section>

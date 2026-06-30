@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("Blob upload error:", msg);
     return NextResponse.json(
-      { error: `Upload failed: ${msg}` },
+      { error: "Upload failed. Please try again." },
       { status: 500 }
     );
   }
