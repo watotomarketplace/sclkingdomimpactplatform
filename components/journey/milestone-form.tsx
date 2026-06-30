@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle2, Upload, Paperclip, X } from "lucide-react";
 import { MilestoneType } from "@/app/generated/prisma/enums";
-import { upload } from "@vercel/blob/client";
 
 export interface MilestoneField {
   key: string;
@@ -92,20 +91,17 @@ export function MilestoneForm({
     setUploadingField(key);
     setServerError("");
     try {
-      const timeout = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Upload timed out. Please try a smaller file or check your connection.")), 30000)
-      );
-      const blob = await Promise.race([
-        upload(`submissions/${file.name}`, file, {
-          access: "public",
-          handleUploadUrl: "/api/upload",
-        }),
-        timeout,
-      ]);
-      setField(key, blob.url);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Upload failed — check your connection.";
-      setServerError(msg);
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        setServerError(data.error ?? "Upload failed. Try again.");
+        return;
+      }
+      setField(key, data.url);
+    } catch {
+      setServerError("Upload failed — check your connection and try again.");
     } finally {
       setUploadingField(null);
     }
