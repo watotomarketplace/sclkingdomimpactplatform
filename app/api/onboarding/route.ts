@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
+import { MILESTONE_DEADLINES } from "@/lib/milestones";
 
 /**
  * Addendum 3: MVI Brief onboarding submission.
@@ -101,6 +102,20 @@ export async function POST(req: Request) {
         deadline: new Date("2026-05-30T23:59:59Z"),
       },
     });
+
+    if (!isDraft) {
+      await db.milestoneSubmission.upsert({
+        where: { userId_milestoneType: { userId: session.user.id, milestoneType: MilestoneType.MILESTONE_1 } },
+        update: {},
+        create: {
+          userId: session.user.id,
+          milestoneType: MilestoneType.MILESTONE_1,
+          formData: {},
+          status: MilestoneStatus.NOT_STARTED,
+          deadline: MILESTONE_DEADLINES[MilestoneType.MILESTONE_1],
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, complete: !isDraft });
   } catch (err) {

@@ -51,12 +51,12 @@ export default function OnboardingPage() {
     if (Object.keys(values).length === 0) return;
     setSavingDraft(true);
     try {
-      await fetch("/api/onboarding", {
+      const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...values, draft: true }),
       });
-      setDraftSaved(true);
+      if (res.ok) setDraftSaved(true);
     } finally {
       setSavingDraft(false);
     }

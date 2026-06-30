@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle2, Upload, Paperclip, X } from "lucide-react";
 import { MilestoneType } from "@/app/generated/prisma/enums";
+import { upload } from "@vercel/blob/client";
 
 export interface MilestoneField {
   key: string;
@@ -65,12 +66,12 @@ export function MilestoneForm({
     if (Object.keys(values).length === 0) return;
     setSavingDraft(true);
     try {
-      await fetch("/api/milestone-submissions", {
+      const res = await fetch("/api/milestone-submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ milestoneType, formData: values, draft: true }),
       });
-      setDraftSaved(true);
+      if (res.ok) setDraftSaved(true);
     } finally {
       setSavingDraft(false);
     }
@@ -84,20 +85,21 @@ export function MilestoneForm({
   }, [values, draftSaved, saveDraft, submitted]);
 
   const handleFileUpload = async (key: string, file: File) => {
+    if (file.size > 25 * 1024 * 1024) {
+      setServerError("File too large. Maximum size is 25 MB.");
+      return;
+    }
     setUploadingField(key);
     setServerError("");
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.error ?? "Upload failed. Try again.");
-        return;
-      }
-      setField(key, data.url);
-    } catch {
-      setServerError("Upload failed — check your connection and try again.");
+      const blob = await upload(`submissions/${file.name}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      setField(key, blob.url);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Upload failed — check your connection.";
+      setServerError(msg);
     } finally {
       setUploadingField(null);
     }

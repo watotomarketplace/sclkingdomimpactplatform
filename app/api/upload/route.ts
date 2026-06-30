@@ -1,32 +1,13 @@
-import { NextResponse } from "next/server";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@/lib/auth";
-import { put } from "@vercel/blob";
-
-if (!process.env.BLOB_READ_WRITE_TOKEN) {
-  console.error("[upload] BLOB_READ_WRITE_TOKEN is not set — file uploads will fail.");
-}
-
-const MAX_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
-
-const ALLOWED_TYPES: Record<string, string> = {
-  "application/pdf": ".pdf",
-  "application/msword": ".doc",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
-  "application/vnd.ms-powerpoint": ".ppt",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
-  "audio/mpeg": ".mp3",
-  "audio/mp4": ".m4a",
-  "audio/x-m4a": ".m4a",
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/gif": ".gif",
-  "video/mp4": ".mp4",
-};
+import { NextResponse } from "next/server";
 
 /**
  * POST /api/upload
- * Accepts multipart/form-data with a "file" field.
- * Uploads to Vercel Blob and returns { url, filename, size }.
+ * Issues a client-upload token (onBeforeGenerateToken) and handles the
+ * completion callback (onUploadCompleted) from Vercel Blob.
+ * Files go browser → Vercel Blob directly, bypassing the 4.5 MB serverless
+ * function body limit that would otherwise silently cap uploads.
  */
 export async function POST(req: Request) {
   const session = await auth();
@@ -34,58 +15,37 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let formData: FormData;
-  try {
-    formData = await req.formData();
-  } catch {
-    return NextResponse.json({ error: "Invalid form data." }, { status: 400 });
-  }
-
-  const file = formData.get("file");
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "No file provided." }, { status: 400 });
-  }
-
-  if (file.size > MAX_SIZE_BYTES) {
-    return NextResponse.json(
-      { error: "File too large. Maximum size is 25 MB." },
-      { status: 400 }
-    );
-  }
-
-  if (!ALLOWED_TYPES[file.type]) {
-    return NextResponse.json(
-      { error: "File type not allowed. Please upload PDF, Word, PPT, image, or audio files." },
-      { status: 400 }
-    );
-  }
-
-  // Scope the blob path to the user for organisation
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const pathname = `submissions/${session.user.id}/${Date.now()}_${safeName}`;
-
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return NextResponse.json(
-      { error: "File storage is not configured. Please contact support." },
-      { status: 503 }
-    );
-  }
+  const body = (await req.json()) as HandleUploadBody;
 
   try {
-    const blob = await put(pathname, file, {
-      access: "public",
-      contentType: file.type,
+    const jsonResponse = await handleUpload({
+      body,
+      request: req,
+      onBeforeGenerateToken: async () => ({
+        allowedContentTypes: [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.ms-powerpoint",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "audio/mpeg",
+          "audio/mp4",
+          "audio/x-m4a",
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "video/mp4",
+        ],
+        maximumSizeInBytes: 25 * 1024 * 1024,
+        tokenPayload: JSON.stringify({ userId: session!.user.id }),
+      }),
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        console.log("[upload] completed", blob.url, tokenPayload);
+      },
     });
-    return NextResponse.json({
-      url: blob.url,
-      filename: file.name,
-      size: file.size,
-    });
+    return NextResponse.json(jsonResponse);
   } catch (err) {
-    console.error("Blob upload error:", err);
-    return NextResponse.json(
-      { error: "Upload failed. Please try again." },
-      { status: 500 }
-    );
+    console.error("[upload] handleUpload error:", err);
+    return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 400 });
   }
 }
