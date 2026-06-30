@@ -15,6 +15,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      { error: "File storage is not configured. Please contact support." },
+      { status: 503 }
+    );
+  }
+
   const body = (await req.json()) as HandleUploadBody;
 
   try {

@@ -92,10 +92,16 @@ export function MilestoneForm({
     setUploadingField(key);
     setServerError("");
     try {
-      const blob = await upload(`submissions/${file.name}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Upload timed out. Please try a smaller file or check your connection.")), 30000)
+      );
+      const blob = await Promise.race([
+        upload(`submissions/${file.name}`, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        }),
+        timeout,
+      ]);
       setField(key, blob.url);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Upload failed — check your connection.";
