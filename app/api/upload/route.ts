@@ -77,9 +77,10 @@ export async function POST(req: Request) {
       size: file.size,
     });
   } catch (err) {
-    console.error("Blob upload error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Blob upload error:", msg);
     return NextResponse.json(
-      { error: "Upload failed. Please try again." },
+      { error: `Upload failed: ${msg}` },
       { status: 500 }
     );
   }
