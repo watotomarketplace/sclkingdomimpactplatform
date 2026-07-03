@@ -5,6 +5,7 @@ import { z } from "zod";
 import { MilestoneType, MilestoneStatus, Role, InitiativeType } from "@/app/generated/prisma/enums";
 import { MILESTONE_DEADLINES, computeUnlocked } from "@/lib/milestones";
 import { hasAccess } from "@/lib/roles";
+import { collectFileUrls } from "@/lib/files";
 import { Prisma } from "@/app/generated/prisma/client";
 
 /**
@@ -147,9 +148,7 @@ export async function POST(req: Request) {
     const jsonData = formData as Prisma.InputJsonValue;
 
     // Extract any file URL fields so we can also persist them to fileUrls[] for easy retrieval.
-    const fileUrls = Object.entries(formData)
-      .filter(([, v]) => typeof v === "string" && (v as string).startsWith("https://"))
-      .map(([, v]) => v as string);
+    const fileUrls = collectFileUrls(formData);
 
     const submission = await db.milestoneSubmission.upsert({
       where: { userId_milestoneType: { userId: session.user.id, milestoneType } },

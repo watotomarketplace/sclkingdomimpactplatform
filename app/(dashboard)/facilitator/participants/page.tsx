@@ -1,18 +1,88 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
 import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role, MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
-import {
-  computeStatus,
-  computeUnlocked,
-  MILESTONE_SHORT,
-  MILESTONE_TITLES,
-  statusLabel,
-  statusChipClass,
-} from "@/lib/milestones";
+import { MILESTONE_SHORT, statusLabel, statusChipClass } from "@/lib/milestones";
+import { getVisibleParticipants, deriveActive } from "@/lib/participants";
 import Link from "next/link";
-import { Users } from "lucide-react";
+import { Users, UserX } from "lucide-react";
+
+type Row = {
+  id: string;
+  name: string | null;
+  email: string;
+  podId: string | null;
+  podName: string | null;
+  activeMilestone: MilestoneType;
+  activeStatus: MilestoneStatus;
+  submittedCount: number;
+  daysSinceActive: number | null;
+};
+
+const statusOrder: Record<MilestoneStatus, number> = {
+  AT_RISK: 0,
+  LATE: 1,
+  IN_PROGRESS: 2,
+  NOT_STARTED: 3,
+  SUBMITTED: 4,
+};
+
+function ParticipantRow({ row }: { row: Row }) {
+  const chipClass = statusChipClass(row.activeStatus);
+  const daysAgo = row.daysSinceActive;
+  return (
+    <Link
+      href={`/facilitator/participants/${row.id}`}
+      className="flex md:grid md:grid-cols-[1fr_140px_180px_90px_90px] items-center gap-3 px-4 py-3 hover:bg-bg-base transition-colors"
+    >
+      {/* Name + email */}
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className="w-7 h-7 rounded-full bg-bg-base border border-border flex items-center justify-center shrink-0">
+          <span className="text-[10px] font-semibold text-text-secondary">
+            {(row.name ?? row.email).charAt(0).toUpperCase()}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-text-primary truncate">{row.name ?? row.email}</p>
+          <p className="text-[11px] text-[#A3A3A3] truncate hidden md:block">{row.email}</p>
+        </div>
+      </div>
+
+      {/* Group */}
+      <p className="text-[12px] text-text-secondary truncate hidden md:block">
+        {row.podName ?? <span className="text-[#A3A3A3] italic">No group</span>}
+      </p>
+
+      {/* Active milestone */}
+      <div className="hidden md:block">
+        <p className="text-[12px] text-text-secondary">{MILESTONE_SHORT[row.activeMilestone]}</p>
+        <p className="text-[10px] text-[#A3A3A3] mt-0.5">{row.submittedCount} / 5 submitted</p>
+      </div>
+
+      {/* Status */}
+      <div className="ml-auto md:ml-0">
+        <span className={`${chipClass} text-[10px]`}>{statusLabel(row.activeStatus)}</span>
+      </div>
+
+      {/* Last active */}
+      <p className="text-[11px] text-[#A3A3A3] hidden md:block">
+        {daysAgo === null ? "—" : daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
+      </p>
+    </Link>
+  );
+}
+
+function TableHeader() {
+  return (
+    <div className="hidden md:grid grid-cols-[1fr_140px_180px_90px_90px] gap-3 px-4 py-2.5 border-b border-border">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Name</p>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Group</p>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Active Milestone</p>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Status</p>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Last Active</p>
+    </div>
+  );
+}
 
 export default async function FacilitatorParticipantsPage() {
   const session = await auth();
@@ -20,85 +90,34 @@ export default async function FacilitatorParticipantsPage() {
   if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
   const adminView = isAdmin(session.user.role as Role);
-
-  const pods = await db.pod.findMany({
-    where: adminView ? {} : { facilitatorId: session.user.id },
-    include: {
-      members: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              milestoneSubmissions: {
-                select: {
-                  milestoneType: true,
-                  status: true,
-                  submittedAt: true,
-                  updatedAt: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { name: "asc" },
+  const participants = await getVisibleParticipants({
+    id: session.user.id,
+    role: session.user.role as Role,
   });
 
-  type Row = {
-    id: string;
-    name: string | null;
-    email: string;
-    podId: string;
-    podName: string;
-    activeMilestone: MilestoneType;
-    activeStatus: MilestoneStatus;
-    submittedCount: number;
-    lastActivityAt: Date | null;
-  };
+  const rows: Row[] = participants.map((p) => {
+    const { activeMilestone, activeStatus, submittedCount, daysSinceActive } = deriveActive(p.subs);
+    return {
+      id: p.id,
+      name: p.name,
+      email: p.email,
+      podId: p.podId,
+      podName: p.podName,
+      activeMilestone,
+      activeStatus,
+      submittedCount,
+      daysSinceActive,
+    };
+  });
 
-  const rows: Row[] = pods.flatMap((pod) =>
-    pod.members.map(({ user }) => {
-      const subs = user.milestoneSubmissions;
-      const unlocked = computeUnlocked(subs);
-      const activeMilestone = unlocked[unlocked.length - 1] ?? MilestoneType.ONBOARDING;
-      const subRecord = subs.find((s) => s.milestoneType === activeMilestone) ?? null;
-      const activeStatus = computeStatus(activeMilestone, subRecord);
-      const submittedCount = subs.filter(
-        (s) => s.status === MilestoneStatus.SUBMITTED || s.submittedAt
-      ).length;
-      const lastActivityAt =
-        subs.length > 0
-          ? subs.reduce((latest, s) =>
-              s.updatedAt > latest ? s.updatedAt : latest,
-              subs[0].updatedAt
-            )
-          : null;
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        podId: pod.id,
-        podName: pod.name,
-        activeMilestone,
-        activeStatus,
-        submittedCount,
-        lastActivityAt,
-      };
-    })
-  );
+  const sortRows = (list: Row[]) =>
+    [...list].sort((a, b) => statusOrder[a.activeStatus] - statusOrder[b.activeStatus]);
 
-  // Sort: at-risk first → late → in-progress → not-started → submitted
-  const statusOrder: Record<MilestoneStatus, number> = {
-    AT_RISK: 0,
-    LATE: 1,
-    IN_PROGRESS: 2,
-    NOT_STARTED: 3,
-    SUBMITTED: 4,
-  };
-  rows.sort((a, b) => statusOrder[a.activeStatus] - statusOrder[b.activeStatus]);
+  const grouped = sortRows(rows.filter((r) => r.podId));
+  const ungrouped = sortRows(rows.filter((r) => !r.podId));
+
+  // Distinct groups represented
+  const groupCount = new Set(grouped.map((r) => r.podId)).size;
 
   return (
     <div className="min-h-full px-4 py-5 md:px-6 md:py-6 max-w-[900px]">
@@ -112,110 +131,65 @@ export default async function FacilitatorParticipantsPage() {
             Participant List
           </h1>
           <p className="text-text-secondary text-[13px] mt-1">
-            {rows.length} participant{rows.length !== 1 ? "s" : ""} across {pods.length} group{pods.length !== 1 ? "s" : ""}
+            {rows.length} participant{rows.length !== 1 ? "s" : ""} · {grouped.length} in {groupCount} group
+            {groupCount !== 1 ? "s" : ""} · {ungrouped.length} ungrouped
           </p>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="glass-2 overflow-hidden">
-        {/* Header row */}
-        <div className="hidden md:grid grid-cols-[1fr_140px_180px_90px_90px] gap-3 px-4 py-2.5 border-b border-border">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Name</p>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Group</p>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Active Milestone</p>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Status</p>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#A3A3A3]">Last Active</p>
+      {rows.length === 0 ? (
+        <div className="glass-2 px-4 py-8 text-center">
+          <Users size={24} className="text-[#A3A3A3] mx-auto mb-2" />
+          <p className="text-[13px] text-[#A3A3A3]">No participants yet.</p>
         </div>
-
-        {rows.length === 0 ? (
-          <div className="px-4 py-8 text-center">
-            <Users size={24} className="text-[#A3A3A3] mx-auto mb-2" />
-            <p className="text-[13px] text-[#A3A3A3]">No participants yet.</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-white/[0.05]">
-            {rows.map((row) => {
-              const chipClass = statusChipClass(row.activeStatus);
-              const daysAgo = row.lastActivityAt
-                ? Math.floor((Date.now() - row.lastActivityAt.getTime()) / (1000 * 60 * 60 * 24))
-                : null;
-              return (
+      ) : (
+        <>
+          {/* Ungrouped — surfaced first so admins can assign them */}
+          {adminView && ungrouped.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <p className="section-label flex items-center gap-1.5">
+                  <UserX size={12} className="text-[#FCA5A5]" /> NOT IN A GROUP ({ungrouped.length})
+                </p>
                 <Link
-                  key={row.id}
-                  href={`/facilitator/participants/${row.id}`}
-                  className="flex md:grid md:grid-cols-[1fr_140px_180px_90px_90px] items-center gap-3 px-4 py-3 hover:bg-bg-base transition-colors"
+                  href="/super-admin/groups"
+                  className="text-[12px] text-[#C8973A] hover:text-[#FCD34D] transition-colors"
                 >
-                  {/* Name + email */}
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-bg-base border border-border flex items-center justify-center shrink-0">
-                      <span className="text-[10px] font-semibold text-text-secondary">
-                        {(row.name ?? row.email).charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-semibold text-text-primary truncate">
-                        {row.name ?? row.email}
-                      </p>
-                      <p className="text-[11px] text-[#A3A3A3] truncate hidden md:block">{row.email}</p>
-                    </div>
-                  </div>
-
-                  {/* Group */}
-                  <p className="text-[12px] text-text-secondary truncate hidden md:block">{row.podName}</p>
-
-                  {/* Active milestone */}
-                  <div className="hidden md:block">
-                    <p className="text-[12px] text-text-secondary">{MILESTONE_SHORT[row.activeMilestone]}</p>
-                    <p className="text-[10px] text-[#A3A3A3] mt-0.5">
-                      {row.submittedCount} / 5 submitted
-                    </p>
-                  </div>
-
-                  {/* Status */}
-                  <div className="ml-auto md:ml-0">
-                    <span className={`${chipClass} text-[10px]`}>
-                      {statusLabel(row.activeStatus)}
-                    </span>
-                  </div>
-
-                  {/* Last active */}
-                  <p className="text-[11px] text-[#A3A3A3] hidden md:block">
-                    {daysAgo === null ? "—" : daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
-                  </p>
+                  Assign to groups →
                 </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Group breakdown */}
-      {pods.length > 1 && (
-        <div className="mt-6">
-          <p className="section-label mb-3">BY GROUP</p>
-          <div className="space-y-2">
-            {pods.map((pod) => {
-              const podRows = rows.filter((r) => r.podId === pod.id);
-              const lateCount = podRows.filter(
-                (r) => r.activeStatus === MilestoneStatus.LATE || r.activeStatus === MilestoneStatus.AT_RISK
-              ).length;
-              return (
-                <div key={pod.id} className="glass-2 px-4 py-3 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[13px] font-semibold text-text-primary">{pod.name}</p>
-                    <p className="text-[11px] text-[#A3A3A3]">{podRows.length} members</p>
-                  </div>
-                  {lateCount > 0 && (
-                    <span className="text-[11px] px-2 py-0.5 rounded bg-[rgba(252,163,77,0.15)] border border-[#FCD34D]/20 text-[#FCD34D]">
-                      {lateCount} late/at-risk
-                    </span>
-                  )}
+              </div>
+              <div className="glass-2 overflow-hidden">
+                <TableHeader />
+                <div className="divide-y divide-white/[0.05]">
+                  {ungrouped.map((row) => (
+                    <ParticipantRow key={row.id} row={row} />
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            </div>
+          )}
+
+          {/* Grouped participants */}
+          <div>
+            {adminView && ungrouped.length > 0 && (
+              <p className="section-label mb-2">IN A GROUP ({grouped.length})</p>
+            )}
+            <div className="glass-2 overflow-hidden">
+              <TableHeader />
+              {(adminView ? grouped : rows).length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <p className="text-[13px] text-[#A3A3A3]">No participants in a group yet.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-white/[0.05]">
+                  {(adminView ? grouped : sortRows(rows)).map((row) => (
+                    <ParticipantRow key={row.id} row={row} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

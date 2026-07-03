@@ -1,87 +1,73 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { put } from "@vercel/blob";
-
-const MAX_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
-
-const ALLOWED_TYPES: Record<string, string> = {
-  "application/pdf": ".pdf",
-  "application/msword": ".doc",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
-  "application/vnd.ms-powerpoint": ".ppt",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
-  "audio/mpeg": ".mp3",
-  "audio/mp4": ".m4a",
-  "audio/x-m4a": ".m4a",
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/gif": ".gif",
-  "video/mp4": ".mp4",
-};
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
 /**
  * POST /api/upload
- * Accepts multipart/form-data with a "file" field.
- * Uploads to Vercel Blob and returns { url, filename, size }.
+ *
+ * Token endpoint for Vercel Blob **client uploads**. The browser calls
+ * `upload()` from `@vercel/blob/client`, which posts here to obtain a
+ * short-lived client token, then streams the file directly to Blob storage.
+ *
+ * This bypasses Vercel's 4.5 MB serverless request-body limit, so large
+ * files (up to 50 MB) can be uploaded.
  */
-export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return NextResponse.json(
-      { error: "File storage is not configured. Please contact support." },
-      { status: 503 }
-    );
-  }
+// Content types participants are allowed to upload (PDF, Office docs, images, audio, video).
+const ALLOWED_CONTENT_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/plain",
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/x-m4a",
+  "audio/wav",
+  "audio/webm",
+  "audio/ogg",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/heic",
+  "video/mp4",
+  "video/quicktime",
+  "video/webm",
+];
 
-  let formData: FormData;
-  try {
-    formData = await req.formData();
-  } catch {
-    return NextResponse.json({ error: "Invalid form data." }, { status: 400 });
-  }
+const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
-  const file = formData.get("file");
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "No file provided." }, { status: 400 });
-  }
-
-  if (file.size > MAX_SIZE_BYTES) {
-    return NextResponse.json(
-      { error: "File too large. Maximum size is 25 MB." },
-      { status: 400 }
-    );
-  }
-
-  if (!ALLOWED_TYPES[file.type]) {
-    return NextResponse.json(
-      { error: "File type not allowed. Please upload PDF, Word, PPT, image, or audio files." },
-      { status: 400 }
-    );
-  }
-
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const pathname = `submissions/${session.user.id}/${Date.now()}_${safeName}`;
+export async function POST(req: Request): Promise<NextResponse> {
+  const body = (await req.json()) as HandleUploadBody;
 
   try {
-    const blob = await put(pathname, file, {
-      access: "public",
-      contentType: file.type,
+    const jsonResponse = await handleUpload({
+      body,
+      request: req,
+      onBeforeGenerateToken: async () => {
+        const session = await auth();
+        if (!session?.user) throw new Error("Unauthorized");
+        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+          throw new Error("File storage is not configured. Please contact support.");
+        }
+        return {
+          allowedContentTypes: ALLOWED_CONTENT_TYPES,
+          maximumSizeInBytes: MAX_SIZE_BYTES,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({ userId: session.user.id }),
+        };
+      },
+      // No server-side post-processing needed; the client stores the returned URL.
+      onUploadCompleted: async () => {},
     });
-    return NextResponse.json({
-      url: blob.url,
-      filename: file.name,
-      size: file.size,
-    });
+
+    return NextResponse.json(jsonResponse);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("Blob upload error:", msg);
-    return NextResponse.json(
-      { error: "Upload failed. Please try again." },
-      { status: 500 }
-    );
+    const msg = err instanceof Error ? err.message : "Upload failed.";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 }

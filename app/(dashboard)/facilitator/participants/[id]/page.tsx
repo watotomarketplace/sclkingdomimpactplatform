@@ -14,6 +14,7 @@ import { MilestoneUnlockButton } from "@/components/facilitator/milestone-unlock
 import { hasAccess, isAdmin } from "@/lib/roles";
 import { Role, MilestoneType } from "@/app/generated/prisma/client";
 import { MILESTONE_TITLES, MILESTONE_ORDER, computeUnlocked, statusLabel, statusChipClass } from "@/lib/milestones";
+import { isFileValue, parseUploadedFiles } from "@/lib/files";
 
 // Field label maps — mirrors the milestone page definitions so the review panel shows human labels.
 const MILESTONE_FIELDS: Record<MilestoneType, { key: string; label: string }[]> = {
@@ -186,19 +187,18 @@ export default async function ParticipantDetailPage({ params }: { params: Promis
           <div className="space-y-3">
             {participant.milestoneSubmissions.map((sub) => {
               const fields = MILESTONE_FIELDS[sub.milestoneType] ?? [];
-              const formData = (sub.formData ?? {}) as Record<string, string>;
-              const fileUrls = Array.isArray(sub.fileUrls) ? (sub.fileUrls as string[]) : [];
+              const formData = (sub.formData ?? {}) as Record<string, unknown>;
 
-              // Collect file-type field URLs from formData as a fallback
-              const fileFieldUrls = fields
-                .filter((f) => f.key.toLowerCase().includes("file") || f.key === "audioNote" || f.key === "artefact")
-                .map((f) => ({ label: f.label, url: formData[f.key] ?? "" }))
-                .filter((f) => f.url.startsWith("https://"));
+              // Collect all file-type field values (each may hold multiple files)
+              const fileFieldUrls = fields.flatMap((f) =>
+                isFileValue(formData[f.key])
+                  ? parseUploadedFiles(formData[f.key]).map((file) => ({ label: file.name, url: file.url }))
+                  : []
+              );
 
-              const allFiles = [
-                ...fileUrls.map((url) => ({ label: "Uploaded file", url })),
-                ...fileFieldUrls,
-              ].filter((f, i, arr) => arr.findIndex((x) => x.url === f.url) === i); // dedup
+              const allFiles = fileFieldUrls.filter(
+                (f, i, arr) => arr.findIndex((x) => x.url === f.url) === i
+              ); // dedup
 
               return (
                 <div key={sub.id} className="space-y-1">

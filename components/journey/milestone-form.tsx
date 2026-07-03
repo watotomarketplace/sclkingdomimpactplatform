@@ -2,9 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, CheckCircle2, Upload, Paperclip, X } from "lucide-react";
 import { MilestoneType } from "@/app/generated/prisma/enums";
+import { parseUploadedFiles, filesToValue, type UploadedFile } from "@/lib/files";
+
+const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB per file
 
 export interface MilestoneField {
   key: string;
@@ -83,28 +87,45 @@ export function MilestoneForm({
     }
   }, [values, draftSaved, saveDraft, submitted]);
 
-  const handleFileUpload = async (key: string, file: File) => {
-    if (file.size > 25 * 1024 * 1024) {
-      setServerError("File too large. Maximum size is 25 MB.");
+  const handleFileUpload = async (key: string, fileList: FileList) => {
+    const list = Array.from(fileList);
+    if (list.length === 0) return;
+
+    const tooBig = list.find((f) => f.size > MAX_FILE_BYTES);
+    if (tooBig) {
+      setServerError(`"${tooBig.name}" is too large. Maximum size is 50 MB per file.`);
       return;
     }
+
     setUploadingField(key);
     setServerError("");
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.error ?? "Upload failed. Try again.");
-        return;
+      const existing = parseUploadedFiles(values[key]);
+      const uploaded: UploadedFile[] = [];
+      for (const file of list) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const blob = await upload(`submissions/${safeName}`, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+          contentType: file.type || undefined,
+        });
+        uploaded.push({ url: blob.url, name: file.name });
       }
-      setField(key, data.url);
-    } catch {
-      setServerError("Upload failed — check your connection and try again.");
+      setField(key, filesToValue([...existing, ...uploaded]));
+    } catch (err) {
+      setServerError(
+        err instanceof Error && err.message
+          ? `Upload failed: ${err.message}`
+          : "Upload failed — check your connection and try again."
+      );
     } finally {
       setUploadingField(null);
     }
+  };
+
+  const removeFile = (key: string, url: string) => {
+    const remaining = parseUploadedFiles(values[key]).filter((f) => f.url !== url);
+    setField(key, filesToValue(remaining));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -163,19 +184,27 @@ export function MilestoneForm({
                   {field.label}
                 </p>
                 {field.type === "file" || field.type === "audio" ? (
-                  val ? (
-                    <a
-                      href={val}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[13px] text-[#86EFAC] underline flex items-center gap-1.5"
-                    >
-                      <Paperclip size={12} />
-                      View uploaded file
-                    </a>
-                  ) : (
-                    <span className="text-[#A3A3A3] italic text-[13px]">—</span>
-                  )
+                  (() => {
+                    const files = parseUploadedFiles(val);
+                    return files.length > 0 ? (
+                      <div className="space-y-1">
+                        {files.map((f) => (
+                          <a
+                            key={f.url}
+                            href={f.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[13px] text-[#86EFAC] underline flex items-center gap-1.5"
+                          >
+                            <Paperclip size={12} className="shrink-0" />
+                            <span className="truncate">{f.name}</span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-[#A3A3A3] italic text-[13px]">—</span>
+                    );
+                  })()
                 ) : field.type === "radio" ? (
                   <p className="text-[13px] text-text-primary">
                     {field.options?.find((o) => o.value === val)?.label ?? val ?? "—"}
@@ -264,70 +293,78 @@ export function MilestoneForm({
             </div>
           )}
 
-          {/* File / Audio */}
-          {(field.type === "file" || field.type === "audio") && (
-            <div>
-              {values[field.key] ? (
-                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[rgba(134,239,172,0.3)] bg-[rgba(45,90,61,0.15)]">
-                  <Paperclip size={14} className="text-[#86EFAC] shrink-0" />
-                  <a
-                    href={values[field.key]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[13px] text-[#86EFAC] underline truncate flex-1"
+          {/* File / Audio — supports multiple mixed-type files */}
+          {(field.type === "file" || field.type === "audio") && (() => {
+            const files = parseUploadedFiles(values[field.key]);
+            const isUploading = uploadingField === field.key;
+            return (
+              <div className="space-y-2">
+                {files.map((f) => (
+                  <div
+                    key={f.url}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[rgba(134,239,172,0.3)] bg-[rgba(45,90,61,0.15)]"
                   >
-                    {decodeURIComponent(values[field.key].split("/").pop() ?? "View file")}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setField(field.key, "")}
-                    className="text-[#A3A3A3] hover:text-text-primary transition-colors shrink-0"
-                    title="Remove file"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
+                    <Paperclip size={14} className="text-[#86EFAC] shrink-0" />
+                    <a
+                      href={f.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[13px] text-[#86EFAC] underline truncate flex-1"
+                    >
+                      {f.name}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(field.key, f.url)}
+                      className="text-[#A3A3A3] hover:text-text-primary transition-colors shrink-0"
+                      title="Remove file"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
                 <label
                   className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border border-dashed transition-colors ${
-                    uploadingField === field.key
+                    isUploading
                       ? "border-[#C8973A]/40 opacity-60 cursor-not-allowed"
                       : "border-border hover:border-border cursor-pointer"
                   }`}
                 >
-                  {uploadingField === field.key ? (
+                  {isUploading ? (
                     <span className="text-[13px] text-text-secondary">Uploading…</span>
                   ) : (
                     <>
                       <Upload size={15} className="text-text-secondary shrink-0" />
                       <span className="text-[13px] text-text-secondary">
-                        {field.type === "audio"
-                          ? "Choose audio file (.mp3, .m4a, max 25MB)"
-                          : "Choose file (PDF, Word, PPT, image, max 25MB)"}
+                        {files.length > 0
+                          ? "Add more files"
+                          : field.type === "audio"
+                            ? "Choose audio file(s) — mp3, m4a, wav (max 50MB each)"
+                            : "Choose file(s) — PDF, Word, PPT, image, audio (max 50MB each)"}
                       </span>
                     </>
                   )}
                   <input
                     type="file"
+                    multiple
                     accept={
                       field.accept ??
                       (field.type === "audio"
-                        ? ".mp3,.m4a"
-                        : ".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png")
+                        ? "audio/*"
+                        : ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,image/*,audio/*,video/mp4")
                     }
                     className="hidden"
-                    disabled={uploadingField !== null}
+                    disabled={isUploading}
                     onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload(field.key, file);
-                      // Reset input so same file can be re-selected
+                      if (e.target.files?.length) handleFileUpload(field.key, e.target.files);
+                      // Reset input so the same file can be re-selected
                       e.target.value = "";
                     }}
                   />
                 </label>
-              )}
-            </div>
-          )}
+              </div>
+            );
+          })()}
 
           {/* Textarea */}
           {field.type === "textarea" && (

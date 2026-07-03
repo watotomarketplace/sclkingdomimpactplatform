@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, CheckCircle2, MessageSquare, Clock, Paperclip } from "lucide-react";
+import { ChevronDown, ChevronUp, CheckCircle2, MessageSquare, Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
 import { statusChipClass, statusLabel } from "@/lib/milestones";
+import { isFileValue, parseUploadedFiles } from "@/lib/files";
 
 export interface ReviewSubmission {
   id: string;
@@ -122,29 +123,34 @@ export function MilestoneReviewPanel({
       {/* Expanded content */}
       {expanded && (
         <div className="px-4 pb-4 border-t border-border">
-          {/* Form fields */}
-          <div className="space-y-3 mt-4">
+          {/* Form fields — two columns on wider screens to keep the card compact */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mt-4">
             {fields.map((f) => {
               const val = formData[f.key];
-              const isUrl = typeof val === "string" && val.startsWith("https://");
+              const files = isFileValue(val) ? parseUploadedFiles(val) : [];
               return (
                 <div key={f.key}>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A3A3A3] mb-0.5">
                     {f.label}
                   </p>
-                  {isUrl ? (
-                    <a
-                      href={val}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-[13px] text-[#86EFAC] hover:underline"
-                    >
-                      <Paperclip size={12} />
-                      View uploaded file
-                    </a>
+                  {files.length > 0 ? (
+                    <div className="space-y-1">
+                      {files.map((file) => (
+                        <a
+                          key={file.url}
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-[13px] text-[#86EFAC] hover:underline"
+                        >
+                          <Paperclip size={12} className="shrink-0" />
+                          <span className="truncate">{file.name}</span>
+                        </a>
+                      ))}
+                    </div>
                   ) : (
                     <p className="text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap">
-                      {val || <span className="text-[#A3A3A3] italic">Not provided</span>}
+                      {(typeof val === "string" ? val : "") || <span className="text-[#A3A3A3] italic">Not provided</span>}
                     </p>
                   )}
                 </div>

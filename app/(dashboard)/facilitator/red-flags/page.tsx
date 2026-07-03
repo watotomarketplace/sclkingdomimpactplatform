@@ -1,15 +1,9 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
-import { hasAccess, isAdmin } from "@/lib/roles";
+import { hasAccess } from "@/lib/roles";
 import { Role, MilestoneStatus, MilestoneType } from "@/app/generated/prisma/enums";
-import {
-  computeStatus,
-  computeUnlocked,
-  MILESTONE_DEADLINES,
-  MILESTONE_SHORT,
-  MILESTONE_ORDER,
-} from "@/lib/milestones";
+import { MILESTONE_DEADLINES, MILESTONE_SHORT } from "@/lib/milestones";
+import { getVisibleParticipants, deriveActive } from "@/lib/participants";
 import Link from "next/link";
 import { AlertOctagon, AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -18,26 +12,9 @@ export default async function FacilitatorRedFlagsPage() {
   if (!session?.user) redirect("/login");
   if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
-  const adminView = isAdmin(session.user.role as Role);
-
-  const pods = await db.pod.findMany({
-    where: adminView ? {} : { facilitatorId: session.user.id },
-    include: {
-      members: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              milestoneSubmissions: {
-                select: { milestoneType: true, status: true, submittedAt: true, updatedAt: true },
-              },
-            },
-          },
-        },
-      },
-    },
+  const participants = await getVisibleParticipants({
+    id: session.user.id,
+    role: session.user.role as Role,
   });
 
   const now = new Date();
@@ -46,7 +23,7 @@ export default async function FacilitatorRedFlagsPage() {
     userId: string;
     userName: string | null;
     userEmail: string;
-    podName: string;
+    podName: string | null;
     milestone: MilestoneType;
     status: MilestoneStatus;
     daysOverdue: number;
@@ -54,31 +31,21 @@ export default async function FacilitatorRedFlagsPage() {
 
   const flags: FlagRow[] = [];
 
-  for (const pod of pods) {
-    for (const { user } of pod.members) {
-      const subs = user.milestoneSubmissions;
-      const unlocked = computeUnlocked(subs);
-
-      // Check each unlocked milestone that hasn't been submitted
-      for (const milestone of MILESTONE_ORDER) {
-        if (!unlocked.includes(milestone)) break; // linear — stop at first locked
-        const subRecord = subs.find((s) => s.milestoneType === milestone) ?? null;
-        const status = computeStatus(milestone, subRecord, now);
-
-        if (status === MilestoneStatus.LATE || status === MilestoneStatus.AT_RISK) {
-          const deadline = MILESTONE_DEADLINES[milestone];
-          const daysOverdue = Math.floor((now.getTime() - deadline.getTime()) / (1000 * 60 * 60 * 24));
-          flags.push({
-            userId: user.id,
-            userName: user.name,
-            userEmail: user.email,
-            podName: pod.name,
-            milestone,
-            status,
-            daysOverdue,
-          });
-        }
-      }
+  for (const p of participants) {
+    // A participant's only unlocked-but-unsubmitted milestone is their active one.
+    const { activeMilestone, activeStatus } = deriveActive(p.subs, now);
+    if (activeStatus === MilestoneStatus.LATE || activeStatus === MilestoneStatus.AT_RISK) {
+      const deadline = MILESTONE_DEADLINES[activeMilestone];
+      const daysOverdue = Math.floor((now.getTime() - deadline.getTime()) / (1000 * 60 * 60 * 24));
+      flags.push({
+        userId: p.id,
+        userName: p.name,
+        userEmail: p.email,
+        podName: p.podName,
+        milestone: activeMilestone,
+        status: activeStatus,
+        daysOverdue,
+      });
     }
   }
 
@@ -120,7 +87,7 @@ export default async function FacilitatorRedFlagsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {flags.map((flag, i) => {
+          {flags.map((flag) => {
             const isAtRisk = flag.status === MilestoneStatus.AT_RISK;
             return (
               <div
@@ -160,7 +127,7 @@ export default async function FacilitatorRedFlagsPage() {
                       </span>
                     </div>
                     <p className="text-[12px] text-text-secondary mt-0.5">
-                      {flag.podName} · <strong className="text-text-secondary">{MILESTONE_SHORT[flag.milestone]}</strong> · {flag.daysOverdue} day{flag.daysOverdue !== 1 ? "s" : ""} overdue
+                      {flag.podName ?? "No group"} · <strong className="text-text-secondary">{MILESTONE_SHORT[flag.milestone]}</strong> · {flag.daysOverdue} day{flag.daysOverdue !== 1 ? "s" : ""} overdue
                     </p>
                     <p className="text-[12px] text-[#A3A3A3] mt-1.5">
                       {isAtRisk

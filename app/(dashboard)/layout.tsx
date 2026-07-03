@@ -4,7 +4,8 @@ import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { ROLE_LABELS } from "@/lib/roles";
 import { db } from "@/lib/db";
 import { computeUnlocked } from "@/lib/milestones";
-import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
+import { countAtRiskParticipants } from "@/lib/participants";
+import { MilestoneType } from "@/app/generated/prisma/enums";
 
 export default async function DashboardLayout({
   children,
@@ -26,7 +27,7 @@ export default async function DashboardLayout({
 
   // Milestone unlocking for participants and group leaders
   let unlockedMilestones: MilestoneType[] = [MilestoneType.ONBOARDING];
-  let pendingGates = 0;
+  const pendingGates = 0;
   let redFlags = 0;
 
   if (role === "PARTICIPANT" || role === "GROUP_LEADER") {
@@ -38,13 +39,9 @@ export default async function DashboardLayout({
   }
 
   if (role === "FACILITATOR" || role === "PROGRAM_ADMIN" || role === "SUPER_ADMIN") {
-    // Count participants whose latest milestone is late/at-risk
-    const atRisk = await db.milestoneSubmission.count({
-      where: {
-        status: { in: [MilestoneStatus.AT_RISK, MilestoneStatus.LATE] },
-      },
-    });
-    redFlags = atRisk;
+    // Count participants (not submission rows) currently late/at-risk on their
+    // active milestone — matches the Late & At Risk page exactly.
+    redFlags = await countAtRiskParticipants({ id, role });
   }
 
   const unread = await db.notification.count({ where: { userId: id, isRead: false } });

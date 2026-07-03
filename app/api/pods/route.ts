@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { hasAccess } from "@/lib/roles";
+import { ensureDefaultCohort } from "@/lib/cohorts";
 import { Role } from "@/app/generated/prisma/client";
 
 export async function GET() {
@@ -22,11 +23,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { name, cohortId, facilitatorId } = await req.json();
-  if (!name?.trim() || !cohortId) {
-    return NextResponse.json({ error: "name and cohortId are required" }, { status: 400 });
+  if (!name?.trim()) {
+    return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
+  // Cohort is optional from the caller's perspective — fall back to the default cohort.
+  const resolvedCohortId = cohortId || (await ensureDefaultCohort());
   const pod = await db.pod.create({
-    data: { name: name.trim(), cohortId, facilitatorId: facilitatorId || null },
+    data: { name: name.trim(), cohortId: resolvedCohortId, facilitatorId: facilitatorId || null },
   });
   await db.auditLog.create({
     data: {

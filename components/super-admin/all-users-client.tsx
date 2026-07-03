@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { DeleteUserButton } from "@/components/super-admin/delete-user-button";
 import { UserFormModal } from "@/components/super-admin/user-form-modal";
-import { Plus, Pencil, Eye } from "lucide-react";
+import { Plus, Pencil, Eye, Search } from "lucide-react";
 
 type Role = "SUPER_ADMIN" | "PROGRAM_ADMIN" | "FACILITATOR" | "GROUP_LEADER" | "PARTICIPANT";
 
@@ -36,6 +36,23 @@ interface AllUsersClientProps {
 export function AllUsersClient({ grouped, totalCount }: AllUsersClientProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserRow | null>(null);
+  const [query, setQuery] = useState("");
+
+  const filteredGroups = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return grouped;
+    return grouped.map((g) => ({
+      ...g,
+      users: g.users.filter(
+        (u) =>
+          (u.name ?? "").toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q) ||
+          g.label.toLowerCase().includes(q)
+      ),
+    }));
+  }, [grouped, query]);
+
+  const matchCount = filteredGroups.reduce((n, g) => n + g.users.length, 0);
 
   const openCreate = () => {
     setEditingUser(null);
@@ -55,10 +72,12 @@ export function AllUsersClient({ grouped, totalCount }: AllUsersClientProps) {
   return (
     <div className="px-6 py-6 max-w-[900px]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="font-display text-[28px] font-semibold text-text-primary">All Users</h1>
-          <p className="text-text-secondary text-sm mt-1">{totalCount} total accounts</p>
+          <p className="text-text-secondary text-sm mt-1">
+            {query.trim() ? `${matchCount} of ${totalCount} accounts` : `${totalCount} total accounts`}
+          </p>
         </div>
         <Button onClick={openCreate} size="sm">
           <Plus className="w-4 h-4 mr-1.5" />
@@ -66,8 +85,25 @@ export function AllUsersClient({ grouped, totalCount }: AllUsersClientProps) {
         </Button>
       </div>
 
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search users by name, email, or role…"
+          className="w-full pl-10 pr-3 h-10 bg-bg-base border border-border rounded-lg text-sm text-text-primary outline-none focus:border-accent-primary"
+        />
+      </div>
+
+      {query.trim() && matchCount === 0 && (
+        <Card className="py-8 text-center">
+          <p className="text-text-secondary text-sm">No users match “{query}”.</p>
+        </Card>
+      )}
+
       {/* Role groups */}
-      {grouped.map(({ role, label, users: roleUsers }) => {
+      {filteredGroups.map(({ role, label, users: roleUsers }) => {
         if (roleUsers.length === 0) return null;
         return (
           <div key={role} className="mb-6">
@@ -125,8 +161,9 @@ export function AllUsersClient({ grouped, totalCount }: AllUsersClientProps) {
         );
       })}
 
-      {/* Create / Edit modal */}
+      {/* Create / Edit modal — keyed by user so fields reset to the selected account */}
       <UserFormModal
+        key={editingUser?.id ?? "create"}
         open={modalOpen}
         mode={editingUser ? "edit" : "create"}
         user={editingUser ?? undefined}

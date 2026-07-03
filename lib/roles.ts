@@ -48,7 +48,7 @@ export function getDashboardPath(role: Role, onboardingComplete: boolean): strin
 
 export const ROLE_LABELS: Record<Role, string> = {
   SUPER_ADMIN: "Super Admin",
-  PROGRAM_ADMIN: "Super Admin", // merged
+  PROGRAM_ADMIN: "Program Admin",
   FACILITATOR: "Facilitator",
   GROUP_LEADER: "Group Leader",
   PARTICIPANT: "Participant",

@@ -1,17 +1,14 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
 import { getGreeting } from "@/lib/utils";
 import {
-  computeStatus,
-  computeUnlocked,
-  MILESTONE_ORDER,
   MILESTONE_SHORT,
   statusLabel,
   statusChipClass,
 } from "@/lib/milestones";
 import { MilestoneStatus, MilestoneType, Role } from "@/app/generated/prisma/enums";
-import { hasAccess, isAdmin } from "@/lib/roles";
+import { hasAccess } from "@/lib/roles";
+import { getVisibleParticipants, deriveActive } from "@/lib/participants";
 import Link from "next/link";
 import { Users, TrendingUp, AlertTriangle, AlertOctagon } from "lucide-react";
 
@@ -20,69 +17,33 @@ export default async function FacilitatorDashboard() {
   if (!session?.user) redirect("/login");
   if (!hasAccess(session.user.role as Role, Role.FACILITATOR)) redirect("/");
 
-  const adminView = isAdmin(session.user.role as Role);
-
-  const pods = await db.pod.findMany({
-    where: adminView ? {} : { facilitatorId: session.user.id },
-    include: {
-      members: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              milestoneSubmissions: {
-                select: {
-                  milestoneType: true,
-                  status: true,
-                  submittedAt: true,
-                  updatedAt: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+  const participants = await getVisibleParticipants({
+    id: session.user.id,
+    role: session.user.role as Role,
   });
 
   type ParticipantRow = {
     id: string;
     name: string | null;
     email: string;
-    podName: string;
+    podName: string | null;
     activeMilestone: MilestoneType;
     activeStatus: MilestoneStatus;
-    lastActivityAt: Date | null;
+    daysSinceActive: number | null;
   };
 
-  const rows: ParticipantRow[] = pods.flatMap((pod) =>
-    pod.members.map(({ user }) => {
-      const subs = user.milestoneSubmissions;
-      const unlocked = computeUnlocked(subs);
-      // Active milestone = last unlocked
-      const activeMilestone = unlocked[unlocked.length - 1] ?? MilestoneType.ONBOARDING;
-      const subRecord = subs.find((s) => s.milestoneType === activeMilestone) ?? null;
-      const activeStatus = computeStatus(activeMilestone, subRecord);
-      const lastActivityAt =
-        subs.length > 0
-          ? subs.reduce((latest, s) =>
-              s.updatedAt > latest ? s.updatedAt : latest,
-              subs[0].updatedAt
-            )
-          : null;
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        podName: pod.name,
-        activeMilestone,
-        activeStatus,
-        lastActivityAt,
-      };
-    })
-  );
+  const rows: ParticipantRow[] = participants.map((p) => {
+    const { activeMilestone, activeStatus, daysSinceActive } = deriveActive(p.subs);
+    return {
+      id: p.id,
+      name: p.name,
+      email: p.email,
+      podName: p.podName,
+      activeMilestone,
+      activeStatus,
+      daysSinceActive,
+    };
+  });
 
   const totalCount = rows.length;
   const submittedAll = rows.filter(
@@ -172,9 +133,7 @@ export default async function FacilitatorDashboard() {
           <div className="divide-y divide-white/[0.05]">
             {sorted.slice(0, 20).map((row) => {
               const chipClass = statusChipClass(row.activeStatus);
-              const daysAgo = row.lastActivityAt
-                ? Math.floor((Date.now() - row.lastActivityAt.getTime()) / (1000 * 60 * 60 * 24))
-                : null;
+              const daysAgo = row.daysSinceActive;
               return (
                 <Link
                   key={row.id}
@@ -192,7 +151,7 @@ export default async function FacilitatorDashboard() {
                     <p className="text-[13px] font-semibold text-text-primary truncate">
                       {row.name ?? row.email}
                     </p>
-                    <p className="text-[11px] text-[#A3A3A3]">{row.podName}</p>
+                    <p className="text-[11px] text-[#A3A3A3]">{row.podName ?? "No group"}</p>
                   </div>
                   {/* Milestone */}
                   <div className="hidden sm:block text-right shrink-0">
