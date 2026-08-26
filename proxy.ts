@@ -30,13 +30,9 @@ export default auth((req) => {
   }
 
   // Onboarding (MVI Brief) — Addendum 3
+  // Reachable even after completion so participants can go back and edit their brief.
   if (pathname.startsWith("/onboarding")) {
     if (!session?.user) return NextResponse.redirect(new URL("/login", req.url));
-    if (session.user.onboardingComplete) {
-      return NextResponse.redirect(
-        new URL(getDashboardPath(session.user.role, true), req.url)
-      );
-    }
     return NextResponse.next();
   }
 
