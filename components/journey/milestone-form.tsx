@@ -174,7 +174,13 @@ export function MilestoneForm({
         </h2>
         <p className="text-text-secondary text-[14px] mb-5">
           Your submission has been recorded. The next milestone will unlock automatically.
+          You can still refine your answers below if anything needs updating.
         </p>
+        <div className="flex justify-center mb-5">
+          <Button type="button" variant="ghost" onClick={() => setSubmitted(false)}>
+            Edit submission
+          </Button>
+        </div>
         <div className="space-y-3 text-left">
           {fields.map((field) => {
             const val = values[field.key];

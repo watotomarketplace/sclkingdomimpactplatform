@@ -109,10 +109,16 @@ export default async function OnboardingJourneyPage() {
       {/* Submitted brief — read-only view */}
       {isSubmitted && (
         <>
-          <div className="callout-gold mb-5">
+          <div className="callout-gold mb-5 flex items-center justify-between gap-3 flex-wrap">
             <p className="text-[13px] font-medium">
               ✅ Your MVI Brief has been submitted and will be reviewed by your facilitator during the Day 3 onboarding slot.
             </p>
+            <Link
+              href="/onboarding"
+              className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#FCD34D] hover:underline shrink-0"
+            >
+              Edit submission <ChevronRight size={13} />
+            </Link>
           </div>
 
           <div className="space-y-3">

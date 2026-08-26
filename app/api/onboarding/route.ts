@@ -80,6 +80,18 @@ export async function POST(req: Request) {
       },
     });
 
+    // If onboarding was already reviewed and this is a genuine re-submission (not a draft
+    // save), the old review no longer applies to the new answers.
+    const existingOnboarding = await db.milestoneSubmission.findUnique({
+      where: {
+        userId_milestoneType: {
+          userId: session.user.id,
+          milestoneType: MilestoneType.ONBOARDING,
+        },
+      },
+    });
+    const clearsStaleReview = !isDraft && existingOnboarding?.reviewedAt != null;
+
     // Create or update the ONBOARDING milestone submission record
     await db.milestoneSubmission.upsert({
       where: {
@@ -92,6 +104,9 @@ export async function POST(req: Request) {
         formData: data,
         status: isDraft ? MilestoneStatus.IN_PROGRESS : MilestoneStatus.SUBMITTED,
         submittedAt: isDraft ? null : now,
+        ...(clearsStaleReview
+          ? { reviewedAt: null, reviewedById: null, reviewNotes: null }
+          : {}),
       },
       create: {
         userId: session.user.id,
@@ -102,6 +117,17 @@ export async function POST(req: Request) {
         deadline: new Date("2026-05-30T23:59:59Z"),
       },
     });
+
+    if (clearsStaleReview && existingOnboarding?.reviewedById) {
+      await db.notification.create({
+        data: {
+          userId: existingOnboarding.reviewedById,
+          type: "MILESTONE_RESUBMITTED",
+          message: `${session.user.name} updated their Onboarding submission after your review — please take another look.`,
+          link: `/facilitator/reviews/onboarding`,
+        },
+      }).catch(() => undefined); // notifications are best-effort
+    }
 
     if (!isDraft) {
       await db.milestoneSubmission.upsert({

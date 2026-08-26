@@ -150,6 +150,13 @@ export async function POST(req: Request) {
     // Extract any file URL fields so we can also persist them to fileUrls[] for easy retrieval.
     const fileUrls = collectFileUrls(formData);
 
+    // If this milestone was already reviewed and the participant is re-submitting
+    // (not just saving a draft), the old review no longer applies to the new answers.
+    const existingRecord = await db.milestoneSubmission.findUnique({
+      where: { userId_milestoneType: { userId: session.user.id, milestoneType } },
+    });
+    const clearsStaleReview = !isDraft && existingRecord?.reviewedAt != null;
+
     const submission = await db.milestoneSubmission.upsert({
       where: { userId_milestoneType: { userId: session.user.id, milestoneType } },
       update: {
@@ -158,6 +165,9 @@ export async function POST(req: Request) {
         status: isDraft ? MilestoneStatus.IN_PROGRESS : MilestoneStatus.SUBMITTED,
         submittedAt: isDraft ? undefined : now,
         updatedAt: now,
+        ...(clearsStaleReview
+          ? { reviewedAt: null, reviewedById: null, reviewNotes: null }
+          : {}),
       },
       create: {
         userId: session.user.id,
@@ -169,6 +179,17 @@ export async function POST(req: Request) {
         deadline,
       },
     });
+
+    if (clearsStaleReview && existingRecord?.reviewedById) {
+      await db.notification.create({
+        data: {
+          userId: existingRecord.reviewedById,
+          type: "MILESTONE_RESUBMITTED",
+          message: `${session.user.name} updated their ${milestoneType.replace("_", " ")} submission after your review — please take another look.`,
+          link: `/facilitator/reviews/${milestoneType.toLowerCase().replace("_", "-")}`,
+        },
+      }).catch(() => undefined); // notifications are best-effort
+    }
 
     // Auto-seed the next milestone at NOT_STARTED so it shows up in the sidebar.
     if (!isDraft) {

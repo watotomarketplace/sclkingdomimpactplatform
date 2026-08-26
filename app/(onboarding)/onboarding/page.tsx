@@ -27,17 +27,16 @@ export default function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
+  const [alreadyComplete, setAlreadyComplete] = useState(false);
 
-  // Load existing draft if any
+  // Load existing draft/submission if any
   useEffect(() => {
     if (status !== "authenticated") return;
     fetch("/api/onboarding")
       .then((r) => r.json())
       .then((d) => {
         if (d.brief) setValues(d.brief);
-        if (d.complete) {
-          window.location.href = "/participant";
-        }
+        if (d.complete) setAlreadyComplete(true);
       })
       .catch(() => undefined);
   }, [status]);
@@ -62,13 +61,14 @@ export default function OnboardingPage() {
     }
   }, [values]);
 
-  // Auto-save draft every 30 seconds when there are changes
+  // Auto-save draft every 30 seconds when there are changes (only before first submission —
+  // once complete, saving a "draft" would revert the milestone status to IN_PROGRESS).
   useEffect(() => {
-    if (!draftSaved && Object.keys(values).length > 0) {
+    if (!alreadyComplete && !draftSaved && Object.keys(values).length > 0) {
       const t = setTimeout(saveDraft, 30000);
       return () => clearTimeout(t);
     }
-  }, [values, draftSaved, saveDraft]);
+  }, [values, draftSaved, saveDraft, alreadyComplete]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +96,7 @@ export default function OnboardingPage() {
       }
       // Refresh JWT so onboardingComplete = true is reflected
       await update?.({ onboardingComplete: true, covenantSigned: true });
-      window.location.href = "/participant";
+      window.location.href = alreadyComplete ? "/participant/journey/onboarding" : "/participant";
     } catch {
       setServerError("Network error — try again.");
       setSubmitting(false);
@@ -115,10 +115,12 @@ export default function OnboardingPage() {
             <Compass size={26} className="text-[#FCD34D]" />
           </div>
           <h1 className="font-display text-[28px] md:text-[34px] font-semibold text-text-primary leading-tight">
-            Welcome to your Kingdom Impact Work journey.
+            {alreadyComplete ? "Edit your MVI Brief." : "Welcome to your Kingdom Impact Work journey."}
           </h1>
           <p className="text-text-secondary text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
-            Transfer your MVI Brief from your workbook into the platform. This is your starting point.
+            {alreadyComplete
+              ? "Refine any answer below, then re-submit. Your facilitator will see the latest version."
+              : "Transfer your MVI Brief from your workbook into the platform. This is your starting point."}
           </p>
           <p className="section-label mt-5">STEP 1 OF 1 — MVI BRIEF</p>
         </div>
@@ -180,7 +182,7 @@ export default function OnboardingPage() {
           {/* Sticky footer */}
           <div className="sticky bottom-4 glass-3 px-4 py-3 flex items-center justify-between gap-3 mt-8">
             <div className="text-[12px] text-text-secondary">
-              {savingDraft ? (
+              {alreadyComplete ? null : savingDraft ? (
                 "Saving draft…"
               ) : draftSaved ? (
                 <span className="text-[#86EFAC]">✓ Draft saved</span>
@@ -191,14 +193,16 @@ export default function OnboardingPage() {
               )}
             </div>
             <Button type="submit" variant="gold" loading={submitting} disabled={progress < 100}>
-              Submit MVI Brief
+              {alreadyComplete ? "Save changes" : "Submit MVI Brief"}
               <ChevronRight size={16} />
             </Button>
           </div>
         </form>
 
         <p className="text-center text-[11px] text-[#A3A3A3] mt-6">
-          Your facilitator will review this brief during the Day 3 onboarding slot.
+          {alreadyComplete
+            ? "Re-submitting will notify your facilitator to take another look."
+            : "Your facilitator will review this brief during the Day 3 onboarding slot."}
         </p>
       </div>
     </div>
