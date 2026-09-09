@@ -3,75 +3,10 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { MilestoneType, MilestoneStatus } from "@/app/generated/prisma/enums";
 import { computeStatus, computeUnlocked, formatDeadline } from "@/lib/milestones";
-import { MilestoneForm, type MilestoneField } from "@/components/journey/milestone-form";
-import { Sparkles } from "lucide-react";
-
-const FIELDS: MilestoneField[] = [
-  {
-    key: "initiativeNameFinal",
-    label: "Initiative name (final)",
-    type: "text",
-    helper: "The final name of your initiative — may have evolved from your working title.",
-    required: true,
-  },
-  {
-    key: "brokennessAddressed",
-    label: "The brokenness addressed",
-    type: "textarea",
-    helper: "Final framing of the problem your initiative addresses.",
-    required: true,
-  },
-  {
-    key: "whatWasBuilt",
-    label: "What was built",
-    type: "textarea",
-    helper: "Describe your MVI as implemented — what it is, how it works, and who it serves.",
-    required: true,
-  },
-  {
-    key: "whatChangedWithEvidence",
-    label: "What changed — with evidence",
-    type: "textarea",
-    helper: "Measurable or observable impact. Be specific: numbers, stories, behaviours that have shifted.",
-    required: true,
-  },
-  {
-    key: "whatDidntWork",
-    label: "What didn't work, and why",
-    type: "textarea",
-    helper: "Honest reflection on failures, pivots, and the things you tried that didn't land.",
-    required: true,
-  },
-  {
-    key: "whatTheyWouldDoDifferently",
-    label: "What you would do differently",
-    type: "textarea",
-    helper: "If you were starting again with what you now know, what would you change?",
-    required: true,
-  },
-  {
-    key: "whatHappensNext",
-    label: "What happens next",
-    type: "textarea",
-    helper: "What is your sustainability plan after this cohort? Who carries this forward, and how?",
-    required: true,
-  },
-  {
-    key: "dedication",
-    label: "Who this report is dedicated to",
-    type: "textarea",
-    helper: "A personal dedication — optional.",
-    required: false,
-  },
-  {
-    key: "presentationFile",
-    label: "Final presentation file",
-    type: "file",
-    helper: "Upload your final presentation (PPT or PDF, 7–8 minutes). Required to submit.",
-    required: true,
-    accept: ".pdf,.ppt,.pptx",
-  },
-];
+import { MilestoneForm } from "@/components/journey/milestone-form";
+import { MILESTONE_4_FIELDS as FIELDS } from "@/lib/milestone-4-fields";
+import { Sparkles, Download } from "lucide-react";
+import Link from "next/link";
 
 export default async function Milestone4Page() {
   const session = await auth();
@@ -124,6 +59,22 @@ export default async function Milestone4Page() {
           Your submission will be shared at the cohort graduation showcase.
         </p>
       </div>
+
+      {isSubmitted && (
+        <div className="callout-gold mb-5 flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-[13px] font-medium">
+            🎓 Your Final Submission is complete — congratulations on finishing the journey!
+          </p>
+          <Link
+            href="/participant/journey/milestone-4/final-submission"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 btn-base btn-gold px-4 py-2 text-[13px] shrink-0"
+          >
+            <Download size={14} /> Download PDF
+          </Link>
+        </div>
+      )}
 
       <MilestoneForm
         milestoneType={MilestoneType.MILESTONE_4}
